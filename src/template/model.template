@@ -1,0 +1,17 @@
+<?php
+
+namespace $NAMESPACE;
+
+/**
+ * Class $CLASS_NAME
+ * @package $NAMESPACE
+ *
+$VIRTUAL_PROPERTIES
+$VIRTUAL_METHODS
+ */
+class $CLASS_NAME extends $BASE_CLASS_NAME
+{
+$PROPERTIES
+
+$METHODS
+}

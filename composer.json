@@ -1,0 +1,12 @@
+{
+  "name": "Laravel model generator",
+  "autoload": {
+    "psr-4": {
+      "Krlove\\Generator\\": "src/"
+    }
+  },
+  "require": {
+    "laravel/framework": "~5.1",
+    "doctrine/dbal": "^2.5"
+  }
+}
