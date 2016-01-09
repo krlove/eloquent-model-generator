@@ -1,5 +1,6 @@
 {
-  "name": "Eloquent Model Generator",
+  "name": "krlove/eloquent-model-generator",
+  "description": "Eloquent Model Generator",
   "autoload": {
     "psr-4": {
       "Krlove\\Generator\\": "src/"
