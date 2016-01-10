@@ -1,6 +1,7 @@
 {
   "name": "krlove/eloquent-model-generator",
   "description": "Eloquent Model Generator",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Krlove\\Generator\\": "src/"
