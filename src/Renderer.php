@@ -1,6 +1,8 @@
 <?php
 
 namespace Krlove\Generator;
+
+use Krlove\Generator\Exception\RendererException;
 use Krlove\Generator\Model\Model;
 use Krlove\Generator\Model\Property;
 
@@ -20,11 +22,6 @@ class Renderer
     /**
      * @var string
      */
-    protected $defaultTemplatePath = 'template/model.template';
-
-    /**
-     * @var string
-     */
     protected $template;
 
     /**
@@ -39,16 +36,12 @@ class Renderer
 
     /**
      * @param Model $model
-     * @param string|null $templatePath
+     * @param string $templatePath
      * @return string
      * @throws RendererException
      */
-    public function render(Model $model, $templatePath = null)
+    public function render(Model $model, $templatePath)
     {
-        if ($templatePath === null) {
-            $templatePath = __DIR__ . '/' . $this->defaultTemplatePath;
-        }
-
         if (!file_exists($templatePath)) {
             throw new RendererException('Template %s does not exist', $templatePath);
         }
@@ -70,7 +63,8 @@ class Renderer
             ->processClassName()
             ->processVirtualProperties()
             ->processVirtualMethods()
-            ->processProperties();
+            ->processProperties()
+            ->processMethods();
     }
 
     /**
@@ -137,7 +131,7 @@ class Renderer
             // todo add docblock for property
             $line = sprintf('    %s $%s', $property->getModifier(), $property->getName());
             if ($property->getValue() !== null) {
-                $line .= sprintf(' = %s', $property->getValue());
+                $line .= sprintf(' = %s', $this->processPropertyValue($property->getValue()));
             }
             $line .= ';';
             $output[] = $line;
@@ -145,6 +139,36 @@ class Renderer
         $this->apply(static::KEY_PROPERTIES, implode(PHP_EOL, $output));
 
         return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function processMethods()
+    {
+        return $this;
+    }
+
+    /**
+     * @param mixed $value
+     * @return string|null
+     */
+    protected function processPropertyValue($value)
+    {
+        $type = gettype($value);
+
+        switch ($type) {
+            case 'boolean':
+                return $value ? 'true' : 'false';
+            case 'int':
+                return $value;
+            case 'string':
+                return sprintf('\'%s\'', $value);
+            case 'array':
+                return null; // todo add support for array type
+            default:
+                return null;
+        }
     }
 
     /**

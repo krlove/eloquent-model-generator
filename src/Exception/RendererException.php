@@ -1,6 +1,6 @@
 <?php
 
-namespace Krlove\Generator;
+namespace Krlove\Generator\Exception;
 
 /**
  * Class RendererException
