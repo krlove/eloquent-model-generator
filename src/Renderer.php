@@ -2,9 +2,14 @@
 
 namespace Krlove\Generator;
 
+use Illuminate\Support\Str;
 use Krlove\Generator\Exception\RendererException;
+use Krlove\Generator\Model\BelongsTo;
+use Krlove\Generator\Model\BelongsToMany;
+use Krlove\Generator\Model\HasMany;
 use Krlove\Generator\Model\Model;
 use Krlove\Generator\Model\Property;
+use Krlove\Generator\Model\Relation;
 
 /**
  * Class Renderer
@@ -14,6 +19,7 @@ class Renderer
 {
     const KEY_NAMESPACE          = 'NAMESPACE';
     const KEY_CLASS_NAME         = 'CLASS_NAME';
+    const KEY_BASE_CLASS_NAME    = 'BASE_CLASS_NAME';
     const KEY_VIRTUAL_PROPERTIES = 'VIRTUAL_PROPERTIES';
     const KEY_VIRTUAL_METHODS    = 'VIRTUAL_METHODS';
     const KEY_PROPERTIES         = 'PROPERTIES';
@@ -61,10 +67,11 @@ class Renderer
 
         return $this->processNamespace()
             ->processClassName()
+            ->processBaseClassName()
             ->processVirtualProperties()
             ->processVirtualMethods()
             ->processProperties()
-            ->processMethods();
+            ->processRelations();
     }
 
     /**
@@ -83,6 +90,16 @@ class Renderer
     protected function processClassName()
     {
         $this->apply(static::KEY_CLASS_NAME, $this->model->getClassName());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function processBaseClassName()
+    {
+        $this->apply(static::KEY_BASE_CLASS_NAME, $this->model->getBaseClass());
 
         return $this;
     }
@@ -125,7 +142,7 @@ class Renderer
             return !$property->isVirtual();
         });
 
-        $output = '';
+        $output = [];
         /** @var Property $property */
         foreach ($properties as $property) {
             // todo add docblock for property
@@ -144,9 +161,40 @@ class Renderer
     /**
      * @return $this
      */
-    protected function processMethods()
+    protected function processRelations()
     {
+        $output = [];
+        /** @var BelongsTo $relation */
+        foreach ($this->model->getRelations() as $relation) {
+            $output[] = $this->processRelation($relation);
+        }
+        $this->apply(static::KEY_METHODS, implode(PHP_EOL . PHP_EOL, $output));
+
         return $this;
+    }
+
+    /**
+     * @param Relation $relation
+     * @return string
+     */
+    protected function processRelation(Relation $relation)
+    {
+        $className    = Str::singular(Str::studly($relation->getTable()));
+        $relationType = Str::camel(class_basename($relation));
+
+        if ($relation instanceof BelongsTo) {
+            $methodName = Str::singular($relation->getTable());
+        } else {
+            $methodName = Str::plural($relation->getTable());
+        }
+
+        $method = [];
+        $method[] = sprintf('    public function %s()', $methodName);
+        $method[] = '    {';
+        $method[] = sprintf('        return $this->%s(\'%s\');', $relationType, $className);
+        $method[] = '    }';
+
+        return implode(PHP_EOL, $method);
     }
 
     /**
@@ -163,9 +211,13 @@ class Renderer
             case 'int':
                 return $value;
             case 'string':
-                return sprintf('\'%s\'', $value);
+                return sprintf('\'%s\'', addslashes($value));
             case 'array':
-                return null; // todo add support for array type
+                array_walk($value, function (&$element) {
+                    $element = sprintf('\'%s\'', addslashes($element));
+                });
+
+                return '[' . implode(', ', $value) . ']'; // TODO add support for multidimensional array
             default:
                 return null;
         }

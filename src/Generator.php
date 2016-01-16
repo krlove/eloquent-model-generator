@@ -2,6 +2,7 @@
 
 namespace Krlove\Generator;
 
+use Krlove\Generator\Exception\GeneratorException;
 use Krlove\Generator\Model\Model;
 
 /**
@@ -33,19 +34,34 @@ class Generator
 
     /**
      * @param Config $config
-     * @return string
+     * @return Model
      * @throws Exception\RendererException
+     * @throws GeneratorException
      */
     public function generateModel(Config $config)
     {
+        $this->validateConfig($config);
         $model = $this->builder->createModel($config);
-
         $content = $this->renderer->render($model, $config->get('template_path'));
 
-        echo $content;
-        // todo implement saving to file
-        //$outputPath = $this->resolveOutputPath($config->get('output_path'), $model);
-        //file_put_contents($outputPath, $content);
+        $outputPath = $this->resolveOutputPath($config->get('output_path'), $model);
+        file_put_contents($outputPath, $content);
+
+        return $model;
+    }
+
+    /**
+     * @param Config $config
+     * @throws GeneratorException
+     */
+    protected function validateConfig(Config $config)
+    {
+        if (!$config->has('table_name')) {
+            throw new GeneratorException('Table name must be specified');
+        }
+        if (!$config->has('output_path')) {
+            throw new GeneratorException('Output path must be specified');
+        }
     }
 
     /**

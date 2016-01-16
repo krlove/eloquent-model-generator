@@ -6,47 +6,21 @@ namespace Krlove\Generator\Model;
  * Class Relation
  * @package Krlove\Generator\Model
  */
-class Relation
+abstract class Relation
 {
-    /**
-     * @var string
-     */
-    protected $column;
-
     /**
      * @var string
      */
     protected $table;
 
     /**
+     * TODO: add support for custom keys
      * Relation constructor.
-     * @param string $column
      * @param string $table
      */
-    public function __construct($column, $table)
+    public function __construct($table)
     {
-        $this->setColumn($column);
         $this->setTable($table);
-    }
-
-    /**
-     * @return string
-     */
-    public function getColumn()
-    {
-        return $this->column;
-    }
-
-    /**
-     * @param string $column
-     *
-     * @return $this
-     */
-    public function setColumn($column)
-    {
-        $this->column = $column;
-
-        return $this;
     }
 
     /**

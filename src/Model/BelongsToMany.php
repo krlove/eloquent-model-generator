@@ -3,9 +3,9 @@
 namespace Krlove\Generator\Model;
 
 /**
- * Class ManyToMany
+ * Class BelongsToMany
  * @package Krlove\Generator\Model
  */
-class ManyToMany extends Relation
+class BelongsToMany extends Relation
 {
 }

@@ -42,9 +42,9 @@ class GenerateModelCommand extends Command
     {
         $config = $this->createConfig();
 
-        $file = $this->generator->generateModel($config);
+        $model = $this->generator->generateModel($config);
 
-        $this->output->writeln($file);
+        $this->output->writeln(sprintf('Model %s generated', $model->getClassName()));
     }
 
     /**

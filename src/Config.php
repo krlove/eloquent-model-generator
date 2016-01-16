@@ -40,8 +40,6 @@ class Config
         $baseConfig = $this->getBaseConfig();
         $this->validateKeys($userConfig, array_keys($baseConfig));
 
-        // todo validate required options
-
         $this->config = $this->merge($userConfig, $baseConfig);
     }
 
@@ -61,7 +59,7 @@ class Config
      */
     public function has($key)
     {
-        return array_key_exists($key, $this->config);
+        return isset($this->config[$key]);
     }
 
     /**

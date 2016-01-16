@@ -3,9 +3,9 @@
 namespace Krlove\Generator\Model;
 
 /**
- * Class OneToOne
+ * Class HasMany
  * @package Krlove\Generator\Model
  */
-class OneToOne extends Relation
+class HasMany extends Relation
 {
 }

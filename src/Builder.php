@@ -3,8 +3,13 @@
 namespace Krlove\Generator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Str;
+use Krlove\Generator\Model\BelongsTo;
+use Krlove\Generator\Model\BelongsToMany;
+use Krlove\Generator\Model\HasMany;
 use Krlove\Generator\Model\Model;
 use Krlove\Generator\Model\Property;
 
@@ -36,9 +41,7 @@ class Builder
         $this->setNamespace($model, $config);
         $this->setBaseClass($model, $config);
         $this->setFields($model);
-
-        $model->addProperty(new Property('someProperty', 'protected', null, 'some value'));
-        $model->addProperty(new Property('someProperty2', 'private', null, 'some value 2'));
+        $this->setRelations($model);
 
         return $model;
     }
@@ -78,11 +81,21 @@ class Builder
      */
     protected function setFields(Model $model)
     {
-        $columns = $this->manager->listTableColumns($model->getTableName());
-        foreach ($columns as $column) {
+        $tableDetails = $this->manager->listTableDetails($model->getTableName());
+        $primaryColumnNames = $tableDetails->getPrimaryKey()->getColumns();
+
+        $columnNames = [];
+        foreach ($tableDetails->getColumns() as $column) {
             $property = Property::createVirtualProperty($column->getName(), $column->getType()->getName());
             $model->addProperty($property);
+
+            if (!in_array($column->getName(), $primaryColumnNames)) {
+                $columnNames[] = $column->getName();
+            }
         }
+
+        $fillable = new Property('fillable', 'protected', 'array', $columnNames);
+        $model->addProperty($fillable);
     }
 
     /**
@@ -90,6 +103,49 @@ class Builder
      */
     protected function setRelations(Model $model)
     {
-        // todo set relations
+        $foreignKeys = $this->manager->listTableForeignKeys($model->getTableName());
+        foreach ($foreignKeys as $foreignKey) {
+            $columns = $foreignKey->getColumns();
+            if (count($columns) !== 1) {
+                continue;
+            }
+
+            $column    = reset($columns);
+            $tableName = $foreignKey->getForeignTableName();
+            $relation = new BelongsTo($tableName);
+            $model->addRelation($relation);
+        }
+
+        $tables = $this->manager->listTables();
+        foreach ($tables as $table) {
+            $foreignKeys = $table->getForeignKeys();
+            foreach ($foreignKeys as $name => $foreignKey) {
+                if ($foreignKey->getForeignTableName() === $model->getTableName()) {
+                    $columns   = $foreignKey->getColumns();
+                    if (count($columns) !== 1) {
+                        continue;
+                    }
+                    $column    = reset($columns);
+
+                    $refColumns = $table->getColumns();
+                    if (count($refColumns) === 2 && count($foreignKeys) === 2) {
+                        $keys = array_keys($foreignKeys);
+                        $key = array_search($name, $keys) === 0 ? 1 : 0;
+                        $secondForeignKey = $foreignKeys[$keys[$key]];
+                        $secondForeignTable = $secondForeignKey->getForeignTableName();
+
+                        $relation = new BelongsToMany($secondForeignTable);
+                        $model->addRelation($relation);
+
+                        break;
+                    } else {
+                        $tableName = $foreignKey->getLocalTableName();
+
+                        $relation = new HasMany($tableName);
+                        $model->addRelation($relation);
+                    }
+                }
+            }
+        }
     }
 }
