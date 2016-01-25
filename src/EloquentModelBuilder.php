@@ -3,17 +3,14 @@
 namespace Krlove\Generator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Str;
-use Krlove\Generator\Model\BelongsTo;
-use Krlove\Generator\Model\BelongsToMany;
-use Krlove\Generator\Model\HasMany;
-use Krlove\Generator\Model\Model;
-use Krlove\Generator\Model\Property;
+use Krlove\Generator\Model\ClassNameModel;
+use Krlove\Generator\Model\EloquentModel;
+use Krlove\Generator\Model\NamespaceModel;
+use Krlove\Generator\Model\PropertyModel;
 
-class Builder
+class EloquentModelBuilder
 {
     /**
      * @var AbstractSchemaManager
@@ -31,77 +28,76 @@ class Builder
 
     /**
      * @param Config $config
-     * @return Model
+     * @return EloquentModel
      */
     public function createModel(Config $config)
     {
-        $model = new Model($config->get('table_name'));
+        $model = new EloquentModel();
 
-        $this->setClassName($model, $config);
-        $this->setNamespace($model, $config);
-        $this->setBaseClass($model, $config);
-        $this->setFields($model);
-        $this->setRelations($model);
+        $this->setClassName($model, $config)
+            ->setNamespace($model, $config)
+            ->setFields($model, $config);
 
         return $model;
     }
 
     /**
-     * @param Model  $model
+     * @param EloquentModel $model
      * @param Config $config
+     * @return $this
      */
-    protected function setClassName(Model $model, Config $config)
+    protected function setClassName(EloquentModel $model, Config $config)
     {
         $className = $config->get('class_name', Str::studly(Str::singular($config->get('table_name'))));
-        $model->setClassName($className);
+        $model->setName(new ClassNameModel($className, $config->get('base_class_name')));
+
+        return $this;
     }
 
     /**
-     * @param Model  $model
+     * @param EloquentModel $model
      * @param Config $config
+     * @return $this
      */
-    protected function setNamespace(Model $model, Config $config)
+    protected function setNamespace(EloquentModel $model, Config $config)
     {
         $namespace = $config->get('namespace');
-        $model->setNamespace($namespace);
+        $model->setNamespace(new NamespaceModel($namespace));
+
+        return $this;
     }
 
     /**
-     * @param Model  $model
+     * @param EloquentModel $model
      * @param Config $config
+     * @return $this
      */
-    protected function setBaseClass(Model $model, Config $config)
+    protected function setFields(EloquentModel $model, Config $config)
     {
-        $baseClassName = $config->get('base_class_name');
-        $model->setBaseClass($baseClassName);
-    }
-
-    /**
-     * @param Model $model
-     */
-    protected function setFields(Model $model)
-    {
-        $tableDetails = $this->manager->listTableDetails($model->getTableName());
+        $tableDetails = $this->manager->listTableDetails($config->get('table_name'));
         $primaryColumnNames = $tableDetails->getPrimaryKey()->getColumns();
 
         $columnNames = [];
         foreach ($tableDetails->getColumns() as $column) {
-            $property = Property::createVirtualProperty($column->getName(), $column->getType()->getName());
-            $model->addProperty($property);
+            // todo add virtual properties
 
             if (!in_array($column->getName(), $primaryColumnNames)) {
                 $columnNames[] = $column->getName();
             }
         }
 
-        $fillable = new Property('fillable', 'protected', 'array', $columnNames);
-        $model->addProperty($fillable);
+        $fillableProperty = new PropertyModel('fillable');
+        $fillableProperty->setModifier('protected')
+            ->setValue($columnNames);
+        $model->addProperty($fillableProperty);
+
+        return $this;
     }
 
     /**
-     * @param Model $model
+     * @param EloquentModel $model
      */
-    protected function setRelations(Model $model)
+    protected function setRelations(Model $model, Config $config)
     {
         $foreignKeys = $this->manager->listTableForeignKeys($model->getTableName());
         foreach ($foreignKeys as $foreignKey) {
@@ -110,7 +106,6 @@ class Builder
                 continue;
             }
 
-            $column    = reset($columns);
             $tableName = $foreignKey->getForeignTableName();
             $relation = new BelongsTo($tableName);
             $model->addRelation($relation);

@@ -3,7 +3,7 @@
 namespace Krlove\Generator;
 
 use Krlove\Generator\Exception\GeneratorException;
-use Krlove\Generator\Model\Model;
+use Krlove\Generator\Model\EloquentModel;
 
 /**
  * Class Generator
@@ -17,16 +17,16 @@ class Generator
     protected $renderer;
 
     /**
-     * @var Builder
+     * @var EloquentModelBuilder
      */
     protected $builder;
 
     /**
      * Generator constructor.
-     * @param Builder  $builder
-     * @param Renderer $renderer
+     * @param EloquentModelBuilder $builder
+     * @param Renderer             $renderer
      */
-    public function __construct(Builder $builder, Renderer $renderer)
+    public function __construct(EloquentModelBuilder $builder, Renderer $renderer)
     {
         $this->builder  = $builder;
         $this->renderer = $renderer;
@@ -34,15 +34,14 @@ class Generator
 
     /**
      * @param Config $config
-     * @return Model
-     * @throws Exception\RendererException
+     * @return EloquentModel
      * @throws GeneratorException
      */
     public function generateModel(Config $config)
     {
         $this->validateConfig($config);
         $model = $this->builder->createModel($config);
-        $content = $this->renderer->render($model, $config->get('template_path'));
+        $content = $model->render()->__toString();
 
         $outputPath = $this->resolveOutputPath($config->get('output_path'), $model);
         file_put_contents($outputPath, $content);
@@ -66,11 +65,11 @@ class Generator
 
     /**
      * @param string $dir
-     * @param Model $model
+     * @param EloquentModel $model
      * @return string
      */
-    protected function resolveOutputPath($dir, Model $model)
+    protected function resolveOutputPath($dir, EloquentModel $model)
     {
-        return $dir . '/' . $model->getClassName() . '.php';
+        return $dir . '/' . $model->getName()->getName() . '.php';
     }
 }
