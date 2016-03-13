@@ -3,9 +3,9 @@
 namespace Krlove\EloquentModelGenerator\Model;
 
 /**
- * Class HasMany
+ * Class HasOne
  * @package Krlove\EloquentModelGenerator\Model
  */
-class HasMany extends Relation
+class HasOne extends Relation
 {
 }

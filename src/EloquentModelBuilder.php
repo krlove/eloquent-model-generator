@@ -1,14 +1,16 @@
 <?php
 
-namespace Krlove\Generator;
+namespace Krlove\EloquentModelGenerator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Str;
-use Krlove\Generator\Model\ClassNameModel;
-use Krlove\Generator\Model\EloquentModel;
-use Krlove\Generator\Model\NamespaceModel;
-use Krlove\Generator\Model\PropertyModel;
+use Krlove\EloquentModelGenerator\Model\BelongsTo;
+use Krlove\EloquentModelGenerator\Model\EloquentModel;
+use Krlove\CodeGenerator\Model\ClassNameModel;
+use Krlove\CodeGenerator\Model\NamespaceModel;
+use Krlove\CodeGenerator\Model\PropertyModel;
+use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 
 class EloquentModelBuilder
 {
@@ -36,7 +38,8 @@ class EloquentModelBuilder
 
         $this->setClassName($model, $config)
             ->setNamespace($model, $config)
-            ->setFields($model, $config);
+            ->setFields($model, $config)
+            ->setRelations($model, $config);
 
         return $model;
     }
@@ -79,7 +82,9 @@ class EloquentModelBuilder
 
         $columnNames = [];
         foreach ($tableDetails->getColumns() as $column) {
-            // todo add virtual properties
+            // TODO: db type to php type
+            $virtualProperty = new VirtualPropertyModel($column->getName());
+            $model->addProperty($virtualProperty);
 
             if (!in_array($column->getName(), $primaryColumnNames)) {
                 $columnNames[] = $column->getName();
@@ -87,7 +92,7 @@ class EloquentModelBuilder
         }
 
         $fillableProperty = new PropertyModel('fillable');
-        $fillableProperty->setModifier('protected')
+        $fillableProperty->setAccess('protected')
             ->setValue($columnNames);
         $model->addProperty($fillableProperty);
 
@@ -96,18 +101,23 @@ class EloquentModelBuilder
 
     /**
      * @param EloquentModel $model
+     * @param Config $config
      */
-    protected function setRelations(Model $model, Config $config)
+    protected function setRelations(EloquentModel $model, Config $config)
     {
-        $foreignKeys = $this->manager->listTableForeignKeys($model->getTableName());
+        $foreignKeys = $this->manager->listTableForeignKeys($config->get('table_name'));
         foreach ($foreignKeys as $foreignKey) {
-            $columns = $foreignKey->getColumns();
-            if (count($columns) !== 1) {
+            $foreignColumns = $foreignKey->getForeignColumns();
+            if (count($foreignColumns) !== 1) {
                 continue;
             }
 
-            $tableName = $foreignKey->getForeignTableName();
-            $relation = new BelongsTo($tableName);
+            // TODO: check if unique
+            $relation = new BelongsTo(
+                $foreignKey->getForeignTableName(),
+                $foreignColumns[0],
+                $foreignKey->getLocalColumns()[0]
+            );
             $model->addRelation($relation);
         }
 
@@ -115,7 +125,7 @@ class EloquentModelBuilder
         foreach ($tables as $table) {
             $foreignKeys = $table->getForeignKeys();
             foreach ($foreignKeys as $name => $foreignKey) {
-                if ($foreignKey->getForeignTableName() === $model->getTableName()) {
+                if ($foreignKey->getForeignTableName() === $config->get('table_name')) {
                     $columns   = $foreignKey->getColumns();
                     if (count($columns) !== 1) {
                         continue;

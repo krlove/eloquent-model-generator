@@ -1,16 +1,16 @@
 <?php
 
-namespace Krlove\Generator\Command;
+namespace Krlove\EloquentModelGenerator\Command;
 
 use Illuminate\Console\Command;
-use Krlove\Generator\Config;
-use Krlove\Generator\Generator;
+use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Class GenerateModelCommand
- * @package Krlove\Generator\Command
+ * @package Krlove\EloquentModelGenerator\Command
  */
 class GenerateModelCommand extends Command
 {
@@ -44,7 +44,7 @@ class GenerateModelCommand extends Command
 
         $model = $this->generator->generateModel($config);
 
-        $this->output->writeln(sprintf('Model %s generated', $model->getClassName()));
+        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
     }
 
     /**

@@ -6,5 +6,5 @@ return [
     'namespace'       => 'App',
     'base_class_name' => '\Illuminate\Database\Eloquent\Model',
     'template_path'   => __DIR__ . '/template/model.template',
-    'output_path'     => null,
+    'output_path'     => '/var/www/generator/app', // TODO: set to null
 ];

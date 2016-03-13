@@ -1,10 +1,10 @@
 <?php
 
-namespace Krlove\Generator\Exception;
+namespace Krlove\EloquentModelGenerator\Exception;
 
 /**
  * Class GeneratorException
- * @package Krlove\Generator\Exception
+ * @package Krlove\EloquentModelGenerator\Exception
  */
 class GeneratorException extends \Exception
 {

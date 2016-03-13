@@ -1,13 +1,13 @@
 <?php
 
-namespace Krlove\Generator\Provider;
+namespace Krlove\EloquentModelGenerator\Provider;
 
 use Illuminate\Support\ServiceProvider;
-use Krlove\Generator\Command\GenerateModelCommand;
+use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
 
 /**
  * Class GeneratorServiceProvider
- * @package Krlove\Generator\Provider
+ * @package Krlove\EloquentModelGenerator\Provider
  */
 class GeneratorServiceProvider extends ServiceProvider
 {

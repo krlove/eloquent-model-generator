@@ -1,12 +1,12 @@
 <?php
 
-namespace Krlove\Generator;
+namespace Krlove\EloquentModelGenerator;
 
-use Krlove\Generator\Exception\ConfigException;
+use Krlove\EloquentModelGenerator\Exception\ConfigException;
 
 /**
  * Class Config
- * @package Krlove\Generator
+ * @package Krlove\EloquentModelGenerator
  */
 class Config
 {

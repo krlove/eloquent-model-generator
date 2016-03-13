@@ -1,10 +1,10 @@
 <?php
 
-namespace Krlove\Generator\Model;
+namespace Krlove\EloquentModelGenerator\Model;
 
 /**
  * Class BelongsToMany
- * @package Krlove\Generator\Model
+ * @package Krlove\EloquentModelGenerator\Model
  */
 class BelongsToMany extends Relation
 {
