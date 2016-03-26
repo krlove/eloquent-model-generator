@@ -29,6 +29,9 @@ class RelationHelper
      */
     public static function getDefaultJoinTableName($tableOne, $tableTwo)
     {
-        return sprintf('%s_%s', $tableOne, $tableTwo);
+        $tables = [$tableOne, $tableTwo];
+        sort($tables);
+
+        return sprintf(implode('_', $tables));
     }
 }
