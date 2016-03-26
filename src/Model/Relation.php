@@ -11,12 +11,7 @@ abstract class Relation
     /**
      * @var string
      */
-    public $defaultPrimaryKey = 'id';
-
-    /**
-     * @var string
-     */
-    protected $table;
+    protected $tableName;
 
     /**
      * @var string
@@ -29,42 +24,34 @@ abstract class Relation
     protected $localColumnName;
 
     /**
-     * @return string
-     */
-    public function getDefaultForeignColumnName()
-    {
-        return sprintf('%s_%s', $this->table, $this->defaultPrimaryKey);
-    }
-
-    /**
      * Relation constructor.
-     * @param string $table
-     * @param string $foreignColumnName
+     * @param string $tableName
+     * @param string $joinColumnName
      * @param string $localColumnName
      */
-    public function __construct($table, $foreignColumnName, $localColumnName)
+    public function __construct($tableName, $joinColumnName, $localColumnName)
     {
-        $this->setTable($table);
-        $this->setForeignColumnName($foreignColumnName);
+        $this->setTableName($tableName);
+        $this->setForeignColumnName($joinColumnName);
         $this->setLocalColumnName($localColumnName);
     }
 
     /**
      * @return string
      */
-    public function getTable()
+    public function getTableName()
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     /**
-     * @param string $table
+     * @param string $tableName
      *
      * @return $this
      */
-    public function setTable($table)
+    public function setTableName($tableName)
     {
-        $this->table = $table;
+        $this->tableName = $tableName;
 
         return $this;
     }
