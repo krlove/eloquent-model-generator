@@ -105,7 +105,7 @@ class EloquentModelBuilder
         $fillableProperty = new PropertyModel('fillable');
         $fillableProperty->setAccess('protected')
             ->setValue($columnNames)
-            ->setDocBlock(new DocBlockModel('@return array'));
+            ->setDocBlock(new DocBlockModel('@var array'));
         $model->addProperty($fillableProperty);
 
         return $this;
