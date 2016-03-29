@@ -12,7 +12,7 @@ use Krlove\CodeGenerator\Model\ClassNameModel;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\MethodModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\CodeGenerator\Model\UseNamespaceModel;
+use Krlove\CodeGenerator\Model\UseClassModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Helper\ClassHelper;
@@ -38,7 +38,7 @@ class EloquentModel extends ClassModel
     public function __construct($className, $baseClassName, $tableName = null)
     {
         $this->setName(new ClassNameModel($className, ClassHelper::getShortClassName($baseClassName)));
-        $this->addUses(new UseNamespaceModel(ltrim($baseClassName, '\\')));
+        $this->addUses(new UseClassModel(ltrim($baseClassName, '\\')));
         $this->tableName = $tableName ?: TitleHelper::getDefaultTableName($className);
 
         if ($this->tableName !== TitleHelper::getDefaultTableName($className)) {
