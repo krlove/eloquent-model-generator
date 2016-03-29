@@ -1,10 +1,11 @@
 <?php
 
 return [
-    'table_name'      => null,
-    'class_name'      => null,
     'namespace'       => 'App',
-    'base_class_name' => '\Illuminate\Database\Eloquent\Model',
+    'base_class_name' => '\\Illuminate\\Database\\Eloquent\\Model',
     'template_path'   => __DIR__ . '/template/model.template',
-    'output_path'     => '/var/www/generator/app', // TODO: set to null
+    'output_path'     => null,
+    'no_timestamps'   => null,
+    'date_format'     => null,
+    'connection'      => null,
 ];

@@ -37,10 +37,7 @@ class Config
             $userConfig = $inputConfig;
         }
 
-        $baseConfig = $this->getBaseConfig();
-        $this->validateKeys($userConfig, array_keys($baseConfig));
-
-        $this->config = $this->merge($userConfig, $baseConfig);
+        $this->config = $this->merge($userConfig, $this->getBaseConfig());
     }
 
     /**
@@ -100,7 +97,7 @@ class Config
      */
     protected function resolveKey($key)
     {
-        return str_replace('-', '_', $key);
+        return str_replace('-', '_', strtolower($key));
     }
 
     /**
@@ -109,19 +106,5 @@ class Config
     protected function getBaseConfig()
     {
         return require __DIR__ . '/Resources/config.php';
-    }
-
-    /**
-     * @param array $array
-     * @param array $allowedKeys
-     * @throws ConfigException
-     */
-    protected function validateKeys(array $array, array $allowedKeys)
-    {
-        foreach ($array as $key => $value) {
-            if (!in_array($key, $allowedKeys)) {
-                throw new ConfigException(sprintf('Key `%s` is not allowed', $key));
-            }
-        }
     }
 }

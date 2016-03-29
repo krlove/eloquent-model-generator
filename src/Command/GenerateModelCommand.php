@@ -70,7 +70,7 @@ class GenerateModelCommand extends Command
     protected function getArguments()
     {
         return [
-            ['table-name', InputArgument::REQUIRED, 'Name of the table'],
+            ['class-name', InputArgument::REQUIRED, 'Name of the table'],
         ];
     }
 
@@ -80,11 +80,15 @@ class GenerateModelCommand extends Command
     protected function getOptions()
     {
         return [
+            ['table-name', 'tn', InputOption::VALUE_OPTIONAL, 'Name of the table to use', null],
             ['output-path', 'op', InputOption::VALUE_OPTIONAL, 'Directory to store generated model', null],
             ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'Namespace of the model', null],
-            ['base-class-name', 'b', InputOption::VALUE_OPTIONAL, 'Class that model must extend', null],
-            ['template-path', 't', InputOption::VALUE_OPTIONAL, 'Path of the template to use', null],
+            ['base-class-name', 'bc', InputOption::VALUE_OPTIONAL, 'Class that model must extend', null],
+            ['template-path', 'tp', InputOption::VALUE_OPTIONAL, 'Path of the template to use', null],
             ['config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file to use', null],
+            ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
+            ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
+            ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
         ];
     }
 }

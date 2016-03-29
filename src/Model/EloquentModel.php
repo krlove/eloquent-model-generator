@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne as EloquentHasOne;
 use Illuminate\Support\Str;
 use Krlove\CodeGenerator\Model\ClassModel;
+use Krlove\CodeGenerator\Model\ClassNameModel;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\MethodModel;
+use Krlove\CodeGenerator\Model\PropertyModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
-use Krlove\EloquentModelGenerator\Helper\RelationHelper;
+use Krlove\EloquentModelGenerator\Helper\TitleHelper;
 
 /**
  * Class EloquentModel
@@ -27,11 +29,20 @@ class EloquentModel extends ClassModel
 
     /**
      * EloquentModel constructor.
-     * @param $tableName
+     * @param string $className
+     * @param string $baseClassName
+     * @param string|null $tableName
      */
-    public function __construct($tableName)
+    public function __construct($className, $baseClassName, $tableName = null)
     {
-        $this->tableName = $tableName;
+        $this->setName(new ClassNameModel($className, $baseClassName));
+        $this->tableName = $tableName ?: TitleHelper::getDefaultTableName($className);
+
+        if ($this->tableName !== TitleHelper::getDefaultTableName($className)) {
+            $property = new PropertyModel('table', 'protected', $this->tableName);
+            $property->setDocBlock(new DocBlockModel('The table associated with the model.', '', '@var string'));
+            $this->addProperty($property);
+        }
     }
 
     /**
@@ -92,39 +103,41 @@ class EloquentModel extends ClassModel
     protected function createMethodBody(Relation $relation)
     {
         $reflectionObject = new \ReflectionObject($relation);
-        $name = Str::camel($reflectionObject->getShortName());
+        $name             = Str::camel($reflectionObject->getShortName());
 
         $arguments = [Str::studly($relation->getTableName())];
         if ($relation instanceof BelongsToMany) {
-            $defaultJoinTableName = RelationHelper::getDefaultJoinTableName($this->tableName, $relation->getTableName());
-            $joinTableName        = $relation->getJoinTable() === $defaultJoinTableName ? null : $relation->getJoinTable();
+            $defaultJoinTableName = TitleHelper::getDefaultJoinTableName($this->tableName, $relation->getTableName());
+            $joinTableName        = $relation->getJoinTable() === $defaultJoinTableName
+                ? null
+                : $relation->getJoinTable();
             $arguments[]          = $joinTableName;
 
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                RelationHelper::getDefaultForeignColumnName($this->getTableName())
+                TitleHelper::getDefaultForeignColumnName($this->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
-                RelationHelper::getDefaultForeignColumnName($relation->getTableName())
+                TitleHelper::getDefaultForeignColumnName($relation->getTableName())
             );
         } elseif ($relation instanceof HasMany) {
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                RelationHelper::getDefaultForeignColumnName($this->getTableName())
+                TitleHelper::getDefaultForeignColumnName($this->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
-                RelationHelper::$defaultPrimaryKey
+                TitleHelper::$defaultPrimaryKey
             );
         } else {
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                RelationHelper::getDefaultForeignColumnName($relation->getTableName())
+                TitleHelper::getDefaultForeignColumnName($relation->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
-                RelationHelper::$defaultPrimaryKey
+                TitleHelper::$defaultPrimaryKey
             );
         }
 

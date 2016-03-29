@@ -5,16 +5,14 @@ namespace Krlove\EloquentModelGenerator;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Str;
 use Krlove\CodeGenerator\Model\DocBlockModel;
+use Krlove\CodeGenerator\Model\NamespaceModel;
+use Krlove\CodeGenerator\Model\PropertyModel;
+use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Model\BelongsTo;
 use Krlove\EloquentModelGenerator\Model\BelongsToMany;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
-use Krlove\CodeGenerator\Model\ClassNameModel;
-use Krlove\CodeGenerator\Model\NamespaceModel;
-use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Model\HasMany;
 use Krlove\EloquentModelGenerator\Model\HasOne;
 
@@ -41,14 +39,18 @@ class EloquentModelBuilder
      */
     public function createModel(Config $config)
     {
-        $model = new EloquentModel($config->get('table_name'));
+        $model = new EloquentModel(
+            $config->get('class_name'),
+            $config->get('base_class_name'),
+            $config->get('table_name')
+        );
 
         if (!$this->manager->tablesExist($model->getTableName())) {
             throw new GeneratorException(sprintf('Table %s does not exist', $model->getTableName()));
         }
 
-        $this->setClassName($model, $config)
-            ->setNamespace($model, $config)
+        $this->setNamespace($model, $config)
+            ->setCustomProperties($model, $config)
             ->setFields($model)
             ->setRelations($model);
 
@@ -60,10 +62,10 @@ class EloquentModelBuilder
      * @param Config $config
      * @return $this
      */
-    protected function setClassName(EloquentModel $model, Config $config)
+    protected function setNamespace(EloquentModel $model, Config $config)
     {
-        $className = $config->get('class_name', Str::studly(Str::singular($model->getTableName())));
-        $model->setName(new ClassNameModel($className, $config->get('base_class_name')));
+        $namespace = $config->get('namespace');
+        $model->setNamespace(new NamespaceModel($namespace));
 
         return $this;
     }
@@ -73,10 +75,31 @@ class EloquentModelBuilder
      * @param Config $config
      * @return $this
      */
-    protected function setNamespace(EloquentModel $model, Config $config)
+    protected function setCustomProperties(EloquentModel $model, Config $config)
     {
-        $namespace = $config->get('namespace');
-        $model->setNamespace(new NamespaceModel($namespace));
+        if ($config->get('no_timestamps') !== false) {
+            $pNoTimestamps = new PropertyModel('timestamps', 'public', false);
+            $pNoTimestamps->setDocBlock(
+                new DocBlockModel('Indicates if the model should be timestamped.', '', '@var bool')
+            );
+            $model->addProperty($pNoTimestamps);
+        }
+
+        if ($config->has('date_format')) {
+            $pDateFormat = new PropertyModel('dateFormat', 'protected', $config->get('date_format'));
+            $pDateFormat->setDocBlock(
+                new DocBlockModel('The storage format of the model\'s date columns.', '', '@var string')
+            );
+            $model->addProperty($pDateFormat);
+        }
+
+        if ($config->has('connection')) {
+            $pConnection = new PropertyModel('connection', 'protected', $config->get('connection'));
+            $pConnection->setDocBlock(
+                new DocBlockModel('The connection name for the model.', '', '@var string')
+            );
+            $model->addProperty($pConnection);
+        }
 
         return $this;
     }
@@ -203,8 +226,6 @@ class EloquentModelBuilder
     }
 
     /**
-     * TODO: allow registering user types
-     *
      * @param string $type
      *
      * @return string

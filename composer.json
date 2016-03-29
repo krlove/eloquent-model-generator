@@ -4,13 +4,11 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Krlove\\Generator\\": "src/"
+      "Krlove\\EloquentModelGenerator\\": "src/"
     }
   },
   "require": {
-    "illuminate/support": "~5.1",
-    "illuminate/database": "~5.1",
-    "doctrine/dbal": "^2.5",
+    "laravel/framework": "5.0.*",
     "krlove/code-generator": "dev-master"
   },
   "minimum-stability": "dev"

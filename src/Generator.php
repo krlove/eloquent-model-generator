@@ -22,7 +22,7 @@ class Generator
      */
     public function __construct(EloquentModelBuilder $builder)
     {
-        $this->builder  = $builder;
+        $this->builder = $builder;
     }
 
     /**
@@ -32,11 +32,10 @@ class Generator
      */
     public function generateModel(Config $config)
     {
-        $this->validateConfig($config);
-        $model = $this->builder->createModel($config);
+        $model   = $this->builder->createModel($config);
         $content = $model->render();
 
-        $outputPath = $this->resolveOutputPath($config->get('output_path'), $model);
+        $outputPath = $this->resolveOutputPath($config);
         file_put_contents($outputPath, $content);
 
         return $model;
@@ -44,25 +43,10 @@ class Generator
 
     /**
      * @param Config $config
-     * @throws GeneratorException
-     */
-    protected function validateConfig(Config $config)
-    {
-        if (!$config->has('table_name')) {
-            throw new GeneratorException('Table name must be specified');
-        }
-        if (!$config->has('output_path')) {
-            throw new GeneratorException('Output path must be specified');
-        }
-    }
-
-    /**
-     * @param string $dir
-     * @param ClassModel $model
      * @return string
      */
-    protected function resolveOutputPath($dir, ClassModel $model)
+    protected function resolveOutputPath(Config $config)
     {
-        return $dir . '/' . $model->getName()->getName() . '.php';
+        return $config->get('output_path', app_path()) . '/' . $config->get('class_name') . '.php';
     }
 }

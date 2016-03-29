@@ -1,17 +1,27 @@
 <?php
 
 namespace Krlove\EloquentModelGenerator\Helper;
+use Illuminate\Support\Str;
 
 /**
- * Class RelationHelper
+ * Class TitleHelper
  * @package Krlove\EloquentModelGenerator\Helper
  */
-class RelationHelper
+class TitleHelper
 {
     /**
      * @var string
      */
     public static $defaultPrimaryKey = 'id';
+
+    /**
+     * @param string $className
+     * @return string
+     */
+    public static function getDefaultTableName($className)
+    {
+        return Str::plural(Str::snake($className));
+    }
 
     /**
      * @param string $table
