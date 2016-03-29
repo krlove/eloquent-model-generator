@@ -84,7 +84,6 @@ class GenerateModelCommand extends Command
             ['output-path', 'op', InputOption::VALUE_OPTIONAL, 'Directory to store generated model', null],
             ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'Namespace of the model', null],
             ['base-class-name', 'bc', InputOption::VALUE_OPTIONAL, 'Class that model must extend', null],
-            ['template-path', 'tp', InputOption::VALUE_OPTIONAL, 'Path of the template to use', null],
             ['config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file to use', null],
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],

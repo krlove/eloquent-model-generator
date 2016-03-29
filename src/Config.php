@@ -1,8 +1,7 @@
 <?php
 
 namespace Krlove\EloquentModelGenerator;
-
-use Krlove\EloquentModelGenerator\Exception\ConfigException;
+use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 
 /**
  * Class Config
@@ -29,7 +28,7 @@ class Config
 
                 $userConfig = $this->merge($inputConfig, $fileConfig);
             } else {
-                $userConfig = $inputConfig;
+                throw new GeneratorException('Config file does not exist');
             }
 
             unset($userConfig['config']);
