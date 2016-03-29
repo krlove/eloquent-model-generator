@@ -12,8 +12,10 @@ use Krlove\CodeGenerator\Model\ClassNameModel;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\MethodModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
+use Krlove\CodeGenerator\Model\UseNamespaceModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
+use Krlove\EloquentModelGenerator\Helper\ClassHelper;
 use Krlove\EloquentModelGenerator\Helper\TitleHelper;
 
 /**
@@ -35,7 +37,8 @@ class EloquentModel extends ClassModel
      */
     public function __construct($className, $baseClassName, $tableName = null)
     {
-        $this->setName(new ClassNameModel($className, $baseClassName));
+        $this->setName(new ClassNameModel($className, ClassHelper::getShortClassName($baseClassName)));
+        $this->addUses(new UseNamespaceModel(ltrim($baseClassName, '\\')));
         $this->tableName = $tableName ?: TitleHelper::getDefaultTableName($className);
 
         if ($this->tableName !== TitleHelper::getDefaultTableName($className)) {
@@ -182,11 +185,3 @@ class EloquentModel extends ClassModel
         return $actual === $default ? null : $actual;
     }
 }
-// public function hasOne($related, $foreignKey = null, $localKey = null)
-
-// public function hasMany($related, $foreignKey = null, $localKey = null)
-
-// public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
-
-// public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
-// return $this->belongsToMany('App\Role', 'user_roles', 'user_id', 'role_id');
