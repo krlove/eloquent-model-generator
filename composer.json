@@ -9,7 +9,7 @@
   },
   "require": {
     "laravel/framework": "5.0.*",
-    "krlove/code-generator": "dev-master"
-  },
-  "minimum-stability": "dev"
+    "doctrine/dbal": "^2.5",
+    "krlove/code-generator": "^1.0"
+  }
 }
