@@ -1,6 +1,7 @@
 <?php
 
 namespace Krlove\EloquentModelGenerator;
+
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 
 /**
@@ -17,6 +18,7 @@ class Config
     /**
      * Config constructor.
      * @param array $inputConfig
+     * @throws GeneratorException
      */
     public function __construct(array $inputConfig)
     {
