@@ -24,7 +24,7 @@ class Config
     {
         $inputConfig = $this->resolveKeys($inputConfig);
 
-        if (array_key_exists('config', $inputConfig)) {
+        if (isset($inputConfig['config'])) {
             if (isset($inputConfig['config']) && file_exists($inputConfig['config'])) {
                 $fileConfig = require $inputConfig['config'];
 
