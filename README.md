@@ -40,7 +40,7 @@ There are several useful options for defining several model's properties:
 - `date-format` - specifies `dateFormat` property of the model
 - `connection` - specifies connection name property of the model
 
-Instead of spcifying options each time when executing the command you can create a config file with your own default values and pass it by specifying `config` option. Generator already contains its own config file at `Resources/config.php`:
+Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php`:
 ```php
 <?php
 
@@ -53,21 +53,37 @@ return [
     'connection'      => null,
 ];
 ```
-Its values can be overrided by your own config (e.g. `<your-base-dir>/config/eloquent_model_generator.php`):
+You can override them by defining `model_defaults` array at `eloquent_model_generator.php`:
 ```php
 <?php
 
 return [
-    'namespace'       => 'Some\\Other\\Namespace',
-    'base_class_name' => 'Some\\Other\\ClassName',
-    'output_path'     => '/full/path/to/output/directory',
-    'no_timestamps'   => true,
-    'date_format'     => 'U',
-    'connection'      => 'other-connection',
+    'model_defaults' => [
+        'namespace'       => 'Some\\Other\\Namespace',
+        'base_class_name' => 'Some\\Other\\ClassName',
+        'output_path'     => '/full/path/to/output/directory',
+        'no_timestamps'   => true,
+        'date_format'     => 'U',
+        'connection'      => 'other-connection',
+    ],
 ];
 ```
+### Registring custom database types
+If running a command leads to an error
 ```
-php artisan krlove:generate:model User --config=<your-base-dir>/config/eloquent_model_generator.php
+[Doctrine\DBAL\DBALException]
+  Unknown database type <ANY_TYPE> requested, Doctrine\DBAL\Platforms\MySqlPlatform may not support it.
+```
+it means that you must register your type `<ANY_TYPE>` with Doctrine.
+
+For instance, you are going to register `enum` type and want Doctrine to treat it as `string` (You can find all existing Doctrine's types [here](http://doctrine-orm.readthedocs.io/projects/doctrine-dbal/en/latest/reference/types.html#mapping-matrix)). Add next lines at your `config/eloquent_model_generator.php`:
+```
+return [
+    // ...
+    'db_types' => [
+        'enum' => 'string',
+    ],
+];
 ```
 ### Usage example
 Table `user`:

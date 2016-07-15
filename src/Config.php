@@ -2,8 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-use Krlove\EloquentModelGenerator\Exception\GeneratorException;
-
 /**
  * Class Config
  * @package Krlove\EloquentModelGenerator
@@ -18,27 +16,17 @@ class Config
     /**
      * Config constructor.
      * @param array $inputConfig
-     * @throws GeneratorException
+     * @param array|null $appConfig
      */
-    public function __construct(array $inputConfig)
+    public function __construct($inputConfig, $appConfig = null)
     {
         $inputConfig = $this->resolveKeys($inputConfig);
 
-        if (isset($inputConfig['config'])) {
-            if (isset($inputConfig['config']) && file_exists($inputConfig['config'])) {
-                $fileConfig = require $inputConfig['config'];
-
-                $userConfig = $this->merge($inputConfig, $fileConfig);
-            } else {
-                throw new GeneratorException('Config file does not exist');
-            }
-
-            unset($userConfig['config']);
-        } else {
-            $userConfig = $inputConfig;
+        if ($appConfig !== null && is_array($appConfig)) {
+            $inputConfig = $this->merge($inputConfig, $appConfig);
         }
 
-        $this->config = $this->merge($userConfig, $this->getBaseConfig());
+        $this->config = $this->merge($inputConfig, $this->getBaseConfig());
     }
 
     /**

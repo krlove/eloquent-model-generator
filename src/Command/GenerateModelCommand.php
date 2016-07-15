@@ -2,6 +2,7 @@
 
 namespace Krlove\EloquentModelGenerator\Command;
 
+use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Generator;
@@ -25,14 +26,21 @@ class GenerateModelCommand extends Command
     protected $generator;
 
     /**
+     * @var AppConfig
+     */
+    protected $appConfig;
+
+    /**
      * GenerateModelCommand constructor.
      * @param Generator $generator
+     * @param AppConfig $appConfig
      */
-    public function __construct(Generator $generator)
+    public function __construct(Generator $generator, AppConfig $appConfig)
     {
         parent::__construct();
 
         $this->generator = $generator;
+        $this->appConfig = $appConfig;
     }
 
     /**
@@ -61,7 +69,7 @@ class GenerateModelCommand extends Command
             $config[$option[0]] = $this->option($option[0]);
         }
 
-        return new Config($config);
+        return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 
     /**
@@ -84,7 +92,6 @@ class GenerateModelCommand extends Command
             ['output-path', 'op', InputOption::VALUE_OPTIONAL, 'Directory to store generated model', null],
             ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'Namespace of the model', null],
             ['base-class-name', 'bc', InputOption::VALUE_OPTIONAL, 'Class that model must extend', null],
-            ['config', 'c', InputOption::VALUE_OPTIONAL, 'Path to config file to use', null],
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
