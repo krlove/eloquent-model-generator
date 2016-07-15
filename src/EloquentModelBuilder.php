@@ -4,6 +4,7 @@ namespace Krlove\EloquentModelGenerator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
+use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Database\DatabaseManager;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\NamespaceModel;
@@ -16,20 +17,68 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Model\HasMany;
 use Krlove\EloquentModelGenerator\Model\HasOne;
 
+/**
+ * Class EloquentModelBuilder
+ * @package Krlove\EloquentModelGenerator
+ */
 class EloquentModelBuilder
 {
+    /**
+     * @var array
+     */
+    protected $types = [
+        'array'        => 'array',
+        'simple_array' => 'array',
+        'json_array'   => 'string',
+        'bigint'       => 'integer',
+        'boolean'      => 'boolean',
+        'datetime'     => 'string',
+        'datetimetz'   => 'string',
+        'date'         => 'string',
+        'time'         => 'string',
+        'decimal'      => 'float',
+        'integer'      => 'integer',
+        'object'       => 'object',
+        'smallint'     => 'integer',
+        'string'       => 'string',
+        'text'         => 'string',
+        'binary'       => 'string',
+        'blob'         => 'string',
+        'float'        => 'float',
+        'guid'         => 'string',
+    ];
+
     /**
      * @var AbstractSchemaManager
      */
     protected $manager;
 
     /**
+     * @var AppConfig
+     */
+    protected $appConfig;
+
+    /**
      * Builder constructor.
      * @param DatabaseManager $databaseManager
+     * @param AppConfig $appConfig
      */
-    public function __construct(DatabaseManager $databaseManager)
+    public function __construct(DatabaseManager $databaseManager, AppConfig $appConfig)
     {
-        $this->manager = $databaseManager->connection()->getDoctrineSchemaManager();
+        $this->manager   = $databaseManager->connection()->getDoctrineSchemaManager();
+        $this->appConfig = $appConfig;
+
+        $this->registerUserTypes();
+    }
+
+    /**
+     * @param string $type
+     * @param string $value
+     */
+    public function registerType($type, $value)
+    {
+        $this->types[$type] = $value;
+        $this->manager->getDatabasePlatform()->registerDoctrineTypeMapping($type, $value);
     }
 
     /**
@@ -55,6 +104,19 @@ class EloquentModelBuilder
             ->setRelations($model);
 
         return $model;
+    }
+
+    /**
+     * Register types defined in application config
+     */
+    protected function registerUserTypes()
+    {
+        $userTypes = $this->appConfig->get('eloquent_model_generator.db_types');
+        if ($userTypes && is_array($userTypes)) {
+            foreach ($userTypes as $type => $value) {
+                $this->registerType($type, $value);
+            }
+        }
     }
 
     /**
@@ -232,20 +294,6 @@ class EloquentModelBuilder
      */
     protected function resolveType($type)
     {
-        static $typesMap = [
-            'date'                        => 'string',
-            'character varying'           => 'string',
-            'boolean'                     => 'boolean',
-            'name'                        => 'string',
-            'double precision'            => 'float',
-            'integer'                     => 'int',
-            'ARRAY'                       => 'array',
-            'json'                        => 'array',
-            'timestamp without time zone' => 'string',
-            'text'                        => 'string',
-            'bigint'                      => 'int'
-        ];
-
-        return array_key_exists($type, $typesMap) ? $typesMap[$type] : 'mixed';
+        return array_key_exists($type, $this->types) ? $this->types[$type] : 'mixed';
     }
 }
