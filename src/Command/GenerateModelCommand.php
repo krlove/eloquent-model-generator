@@ -66,7 +66,11 @@ class GenerateModelCommand extends Command
             $config[$argument[0]] = $this->argument($argument[0]);
         }
         foreach ($this->getOptions() as $option) {
-            $config[$option[0]] = $this->option($option[0]);
+            $value = $this->option($option[0]);
+            if ($option[2] == InputOption::VALUE_NONE && $value === false) {
+                $value = null;
+            }
+            $config[$option[0]] = $value;
         }
 
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
@@ -78,7 +82,7 @@ class GenerateModelCommand extends Command
     protected function getArguments()
     {
         return [
-            ['class-name', InputArgument::REQUIRED, 'Name of the table'],
+            ['class-name', InputArgument::REQUIRED, 'Model class name'],
         ];
     }
 
@@ -91,7 +95,7 @@ class GenerateModelCommand extends Command
             ['table-name', 'tn', InputOption::VALUE_OPTIONAL, 'Name of the table to use', null],
             ['output-path', 'op', InputOption::VALUE_OPTIONAL, 'Directory to store generated model', null],
             ['namespace', 'ns', InputOption::VALUE_OPTIONAL, 'Namespace of the model', null],
-            ['base-class-name', 'bc', InputOption::VALUE_OPTIONAL, 'Class that model must extend', null],
+            ['base-class-name', 'bc', InputOption::VALUE_OPTIONAL, 'Model parent class', null],
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
