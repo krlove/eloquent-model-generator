@@ -46,7 +46,7 @@ class FieldProcessor implements ProcessorInterface
         $prefix        = $this->databaseManager->connection()->getTablePrefix();
 
         $tableDetails       = $schemaManager->listTableDetails($prefix . $model->getTableName());
-        $primaryColumnNames = $tableDetails->getPrimaryKey()->getColumns();
+        $primaryColumnNames = $tableDetails->getPrimaryKey() ? $tableDetails->getPrimaryKey()->getColumns() : [];
 
         $columnNames = [];
         foreach ($tableDetails->getColumns() as $column) {
