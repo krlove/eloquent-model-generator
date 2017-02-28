@@ -18,7 +18,7 @@ class GenerateModelCommand extends Command
     /**
      * @var string
      */
-    protected $name = 'krlove:generate:model';
+    protected $name = 'make:kmodel';
 
     /**
      * @var Generator
