@@ -54,8 +54,8 @@ class RelationProcessor implements ProcessorInterface
      */
     public function process(EloquentModel $model, Config $config)
     {
-        $schemaManager = $this->databaseManager->connection()->getDoctrineSchemaManager();
-        $prefix        = $this->databaseManager->connection()->getTablePrefix();
+        $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
+        $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
         $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
         foreach ($foreignKeys as $tableForeignKey) {
