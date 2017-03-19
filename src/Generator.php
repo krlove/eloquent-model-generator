@@ -44,9 +44,25 @@ class Generator
     /**
      * @param Config $config
      * @return string
+     * @throws GeneratorException
      */
     protected function resolveOutputPath(Config $config)
     {
-        return $config->get('output_path', app_path()) . '/' . $config->get('class_name') . '.php';
+        $path = $config->get('output_path');
+        if ($path === null || stripos($path, '/') !== 0) {
+            $path = app_path($path);
+        }
+
+        if (!is_dir($path)) {
+            if (!mkdir($path, 0777, true)) {
+                throw new GeneratorException(sprintf('Could not create directory %s', $path));
+            }
+        }
+
+        if (!is_writeable($path)) {
+            throw new GeneratorException(sprintf('%s is not writeable', $path));
+        }
+
+        return $path . '/' . $config->get('class_name') . '.php';
     }
 }

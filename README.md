@@ -21,26 +21,38 @@ Use
 ```
 php artisan krlove:generate:model User
 ```
-to generate a model class. Generator will look for table with name `users` and generate a model for it. You can specify another table name by supplying `table-name` option:
+to generate a model class. Generator will look for table with name `users` and generate a model for it.
+
+### table-name
+Use `table-name` option to specify another table name:
 ```
 php artisan krlove:generate:model User --table-name=user
 ```
 In this case generated model will contain `protected $table = 'user'` property.
 
-Generated file will be saved into `app` directory of your application and have `App` namespace. If you want to change the destination and namespace, supply the `output-path` and `namespace` options respectively:
+### output-path
+Generated file will be saved into `app` directory of your application and have `App` namespace by default. If you want to change the destination and namespace, supply the `output-path` and `namespace` options respectively:
 ```
 php artisan krlove:generate:model User --output-path=/full/path/to/output/directory --namespace=Some\\Other\\NSpace
 ```
+`output-path` can be absolute path or relative to project's `app` directory. Absolute path must start with `/`:
+- `/var/www/html/app/Models` - absolute path
+- `Models` - relative path, will be transformed to `/var/www/html/app/Models` (assuming your project app directory is `/var/www/html/app`)
+
+
+### base-class-name
 By default generated class will be extended from `Illuminate\Database\Eloquent\Model`. To change the base class specify `base-class-name` option:
 ```
 php artisan krlove:generate:model User --base-class-name=Some\\Other\\Base\\Model
 ```
+
+### other options
 There are several useful options for defining several model's properties:
 - `no-timestamps` - adds `public $timestamps = false;` property to the model
 - `date-format` - specifies `dateFormat` property of the model
 - `connection` - specifies connection name property of the model
 
-Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php`:
+Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
 ```php
 <?php
 
