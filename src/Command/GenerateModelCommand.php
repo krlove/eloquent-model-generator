@@ -73,7 +73,7 @@ class GenerateModelCommand extends Command
             $config[$option[0]] = $value;
         }
 
-        return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
+        return new Config($config, $this->appConfig->get('eloquent_model_generator'));
     }
 
     /**
