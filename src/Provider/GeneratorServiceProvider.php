@@ -42,4 +42,11 @@ class GeneratorServiceProvider extends ServiceProvider
             return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
         });
     }
+
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__ . '/../Resources/config.php' => config_path('eloquent_model_generator.php'),
+        ]);
+    }
 }
