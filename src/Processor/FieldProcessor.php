@@ -66,6 +66,11 @@ class FieldProcessor implements ProcessorInterface
             ->setDocBlock(new DocBlockModel('@var array'));
         $model->addProperty($fillableProperty);
 
+        $castsProperty = new PropertyModel('casts');
+        $castsProperty->setAccess('protected')
+            ->setValue([])
+            ->setDocBlock(new DocBlockModel('@var array'));
+        $model->addProperty($castsProperty);
         return $this;
     }
 
