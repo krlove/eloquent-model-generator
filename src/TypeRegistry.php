@@ -38,36 +38,30 @@ class TypeRegistry
     ];
 
     /**
-     * @var AbstractSchemaManager
+     * @var DatabaseManager
      */
-    protected $manager;
-
-    /**
-     * @var AppConfig
-     */
-    protected $appConfig;
+    protected $databaseManager;
 
     /**
      * TypeRegistry constructor.
      * @param DatabaseManager $databaseManager
-     * @param AppConfig $appConfig
      */
-    public function __construct(DatabaseManager $databaseManager, AppConfig $appConfig)
+    public function __construct(DatabaseManager $databaseManager)
     {
-        $this->manager   = $databaseManager->connection()->getDoctrineSchemaManager();
-        $this->appConfig = $appConfig;
-
-        $this->registerUserTypes();
+        $this->databaseManager = $databaseManager;
     }
 
     /**
      * @param string $type
      * @param string $value
+     * @param string|null $connection
      */
-    public function registerType($type, $value)
+    public function registerType($type, $value, $connection = null)
     {
         $this->types[$type] = $value;
-        $this->manager->getDatabasePlatform()->registerDoctrineTypeMapping($type, $value);
+
+        $manager = $this->databaseManager->connection($connection)->getDoctrineSchemaManager();
+        $manager->getDatabasePlatform()->registerDoctrineTypeMapping($type, $value);
     }
 
     /**
@@ -78,18 +72,5 @@ class TypeRegistry
     public function resolveType($type)
     {
         return array_key_exists($type, $this->types) ? $this->types[$type] : 'mixed';
-    }
-
-    /**
-     * Register types defined in application config
-     */
-    protected function registerUserTypes()
-    {
-        $userTypes = $this->appConfig->get('eloquent_model_generator.db_types');
-        if ($userTypes && is_array($userTypes)) {
-            foreach ($userTypes as $type => $value) {
-                $this->registerType($type, $value);
-            }
-        }
     }
 }
