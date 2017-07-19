@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
 use Krlove\EloquentModelGenerator\EloquentModelBuilder;
+use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
 use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
 use Krlove\EloquentModelGenerator\Processor\ExistenceCheckerProcessor;
 use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
@@ -36,6 +37,7 @@ class GeneratorServiceProvider extends ServiceProvider
             RelationProcessor::class,
             CustomPropertyProcessor::class,
             TableNameProcessor::class,
+            CustomPrimaryKeyProcessor::class,
         ], self::PROCESSOR_TAG);
 
         $this->app->bind(EloquentModelBuilder::class, function (Application $app) {

@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2017-07-19, v1.2.5
+-----------------
+* Add custom primary key, key type and incrementing properties support
+
 2017-06-23, v1.2.4
 -----------------
 * Fixed issue [#25](https://github.com/krlove/eloquent-model-generator/issues/25)

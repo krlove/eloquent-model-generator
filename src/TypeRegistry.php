@@ -26,7 +26,7 @@ class TypeRegistry
         'date'         => 'string',
         'time'         => 'string',
         'decimal'      => 'float',
-        'integer'      => 'integer',
+        'integer'      => 'int',
         'object'       => 'object',
         'smallint'     => 'integer',
         'string'       => 'string',
