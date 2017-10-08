@@ -59,10 +59,12 @@ class FieldProcessor implements ProcessorInterface
                 $columnNames[] = $column->getName();
             }
         }
-
+        $fillableFields = collect($columnNames)->reject(function ($value) {
+            return in_array($value, ['created_at', 'updated_at', 'deleted_at']);
+        })->toArray();
         $fillableProperty = new PropertyModel('fillable');
         $fillableProperty->setAccess('protected')
-            ->setValue($columnNames)
+            ->setValue($fillableFields)
             ->setDocBlock(new DocBlockModel('@var array'));
         $model->addProperty($fillableProperty);
 
