@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2017-07-19, v1.2.6
+-----------------
+* Add Laravel 5.5 support
+
 2017-07-19, v1.2.5
 -----------------
 * Add custom primary key, key type and incrementing properties support
