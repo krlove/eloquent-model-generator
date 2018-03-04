@@ -75,7 +75,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
             $model->addProperty($keyTypeProperty);
         }
         if ($column->getAutoincrement() !== true) {
-            $autoincrementProperty = new PropertyModel('incrementing', 'protected', false);
+            $autoincrementProperty = new PropertyModel('incrementing', 'public', false);
             $autoincrementProperty->setDocBlock(
                 new DocBlockModel('Indicates if the IDs are auto-incrementing.', '', '@var bool')
             );
