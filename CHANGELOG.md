@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2018-07-15, v1.2.7
+-----------------
+* Merged PR [#26](https://github.com/krlove/eloquent-model-generator/pull/36) (Change `incrementing` property to `public`)
+
 2017-07-19, v1.2.6
 -----------------
 * Add Laravel 5.5 support
