@@ -2,7 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator\Processor;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;

@@ -46,7 +46,7 @@ class RelationProcessor implements ProcessorInterface
     public function __construct(DatabaseManager $databaseManager, EmgHelper $helper)
     {
         $this->databaseManager = $databaseManager;
-        $this->helper          = $helper;
+        $this->helper = $helper;
     }
 
     /**
@@ -55,7 +55,7 @@ class RelationProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config)
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
         $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
         foreach ($foreignKeys as $tableForeignKey) {
@@ -87,9 +87,9 @@ class RelationProcessor implements ProcessorInterface
                     }
 
                     if (count($foreignKeys) === 2 && count($table->getColumns()) === 2) {
-                        $keys               = array_keys($foreignKeys);
-                        $key                = array_search($name, $keys) === 0 ? 1 : 0;
-                        $secondForeignKey   = $foreignKeys[$keys[$key]];
+                        $keys = array_keys($foreignKeys);
+                        $key = array_search($name, $keys) === 0 ? 1 : 0;
+                        $secondForeignKey = $foreignKeys[$keys[$key]];
                         $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
 
                         $relation = new BelongsToMany(
@@ -102,9 +102,9 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName     = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
+                        $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
                         $foreignColumn = $localColumns[0];
-                        $localColumn   = $foreignKey->getForeignColumns()[0];
+                        $localColumn = $foreignKey->getForeignColumns()[0];
 
                         if ($this->isColumnUnique($table, $foreignColumn)) {
                             $relation = new HasOne($tableName, $foreignColumn, $localColumn);
@@ -157,22 +157,22 @@ class RelationProcessor implements ProcessorInterface
     {
         $relationClass = Str::singular(Str::studly($relation->getTableName()));
         if ($relation instanceof HasOne) {
-            $name     = Str::singular(Str::camel($relation->getTableName()));
+            $name = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasOne::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof HasMany) {
-            $name     = Str::plural(Str::camel($relation->getTableName()));
+            $name = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
         } elseif ($relation instanceof BelongsTo) {
-            $name     = Str::singular(Str::camel($relation->getTableName()));
+            $name = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentBelongsTo::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof BelongsToMany) {
-            $name     = Str::plural(Str::camel($relation->getTableName()));
+            $name = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentBelongsToMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
@@ -196,7 +196,7 @@ class RelationProcessor implements ProcessorInterface
     protected function createMethodBody(EloquentModel $model, Relation $relation)
     {
         $reflectionObject = new \ReflectionObject($relation);
-        $name             = Str::camel($reflectionObject->getShortName());
+        $name = Str::camel($reflectionObject->getShortName());
 
         $arguments = [
             $model->getNamespace()->getNamespace() . '\\' . Str::singular(Str::studly($relation->getTableName()))
@@ -207,10 +207,10 @@ class RelationProcessor implements ProcessorInterface
                 $model->getTableName(),
                 $relation->getTableName()
             );
-            $joinTableName        = $relation->getJoinTable() === $defaultJoinTableName
+            $joinTableName = $relation->getJoinTable() === $defaultJoinTableName
                 ? null
                 : $relation->getJoinTable();
-            $arguments[]          = $joinTableName;
+            $arguments[] = $joinTableName;
 
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
@@ -249,7 +249,7 @@ class RelationProcessor implements ProcessorInterface
      */
     protected function prepareArguments(array $array)
     {
-        $array     = array_reverse($array);
+        $array = array_reverse($array);
         $milestone = false;
         foreach ($array as $key => &$item) {
             if (!$milestone) {

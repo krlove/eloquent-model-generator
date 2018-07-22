@@ -2,8 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Database\DatabaseManager;
 
 /**
@@ -55,6 +53,7 @@ class TypeRegistry
      * @param string $type
      * @param string $value
      * @param string|null $connection
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function registerType($type, $value, $connection = null)
     {

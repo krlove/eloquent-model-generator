@@ -6,7 +6,6 @@ use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Generator;
-use Krlove\EloquentModelGenerator\TypeRegistry;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 

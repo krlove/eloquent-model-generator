@@ -34,7 +34,7 @@ class FieldProcessor implements ProcessorInterface
     public function __construct(DatabaseManager $databaseManager, TypeRegistry $typeRegistry)
     {
         $this->databaseManager = $databaseManager;
-        $this->typeRegistry    = $typeRegistry;
+        $this->typeRegistry = $typeRegistry;
     }
 
     /**
