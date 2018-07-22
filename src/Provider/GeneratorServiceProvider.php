@@ -2,7 +2,7 @@
 
 namespace Krlove\EloquentModelGenerator\Provider;
 
-use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
 use Krlove\EloquentModelGenerator\EloquentModelBuilder;
@@ -21,6 +21,7 @@ use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
 class GeneratorServiceProvider extends ServiceProvider
 {
     const PROCESSOR_TAG = 'eloquent_model_generator.processor';
+
     /**
      * {@inheritDoc}
      */
