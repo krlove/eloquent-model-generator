@@ -59,7 +59,11 @@ class Generator
     {
         $path = $config->get('output_path');
         if ($path === null || stripos($path, '/') !== 0) {
-            $path = app_path($path);
+            if (function_exists('app_path')) {
+                $path = app_path($path);
+            } else {
+                $path = app('path') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+            }
         }
 
         if (!is_dir($path)) {

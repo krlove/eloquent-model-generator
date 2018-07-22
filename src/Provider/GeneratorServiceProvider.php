@@ -2,7 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator\Provider;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
 use Krlove\EloquentModelGenerator\EloquentModelBuilder;
@@ -41,7 +40,7 @@ class GeneratorServiceProvider extends ServiceProvider
             CustomPrimaryKeyProcessor::class,
         ], self::PROCESSOR_TAG);
 
-        $this->app->bind(EloquentModelBuilder::class, function (Application $app) {
+        $this->app->bind(EloquentModelBuilder::class, function ($app) {
             return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
         });
     }
