@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+2018-07-22, v1.3.0
+-----------------
+* Add lumen Support (issue [#33](https://github.com/krlove/eloquent-model-generator/issues/33))
+* Perform minor code style changes
+
 2018-07-15, v1.2.7
 -----------------
 * Merged PR [#26](https://github.com/krlove/eloquent-model-generator/pull/36) (Change `incrementing` property to `public`)
