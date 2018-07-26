@@ -45,6 +45,9 @@ class Generator
         $content = $model->render();
 
         $outputPath = $this->resolveOutputPath($config);
+        if ($config->get('backup') && file_exists($outputPath)) {
+            rename($outputPath, $outputPath . '~');
+        }
         file_put_contents($outputPath, $content);
 
         return $model;

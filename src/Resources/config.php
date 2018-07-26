@@ -7,4 +7,5 @@ return [
     'no_timestamps'   => null,
     'date_format'     => null,
     'connection'      => null,
+    'backup'          => null,
 ];
