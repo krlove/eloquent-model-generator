@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+2018-07-26, v1.3.1
+-----------------
+* Add package autodiscovery feature (issue [#37](https://github.com/krlove/eloquent-model-generator/issues/37))
+* Introduce backup option for saving existing model file (issue [#32](https://github.com/krlove/eloquent-model-generator/issues/32))
+
 2018-07-22, v1.3.0
 -----------------
 * Add lumen Support (issue [#33](https://github.com/krlove/eloquent-model-generator/issues/33))
