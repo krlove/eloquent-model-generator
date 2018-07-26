@@ -48,11 +48,20 @@ By default generated class will be extended from `Illuminate\Database\Eloquent\M
 php artisan krlove:generate:model User --base-class-name=Some\\Other\\Base\\Model
 ```
 
-### other options
+### backup
+Save existing model before generating a new one
+```
+php artisan krlove:generate:model User --backup
+```
+If `User.php` file already exist, it will be renamed into `User.php~` first and saved at the same directory. After than a new `User.php` will be generated.
+
+### Other options
 There are several useful options for defining several model's properties:
 - `no-timestamps` - adds `public $timestamps = false;` property to the model
 - `date-format` - specifies `dateFormat` property of the model
 - `connection` - specifies connection name property of the model
+
+### Overriding default options globally
 
 Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
 ```php
@@ -65,6 +74,7 @@ return [
     'no_timestamps'   => null,
     'date_format'     => null,
     'connection'      => null,
+    'backup'          => null,
 ];
 ```
 You can override them by defining `model_defaults` array at `eloquent_model_generator.php`:
@@ -79,6 +89,7 @@ return [
         'no_timestamps'   => true,
         'date_format'     => 'U',
         'connection'      => 'other-connection',
+        'backup'          => true,
     ],
 ];
 ```
