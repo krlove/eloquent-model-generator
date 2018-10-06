@@ -12,6 +12,7 @@ use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
 use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
+use Krlove\EloquentModelGenerator\Processor\TableWithoutTimestamps;
 
 /**
  * Class GeneratorServiceProvider
@@ -38,6 +39,7 @@ class GeneratorServiceProvider extends ServiceProvider
             CustomPropertyProcessor::class,
             TableNameProcessor::class,
             CustomPrimaryKeyProcessor::class,
+            TableWithoutTimestamps::class,
         ], self::PROCESSOR_TAG);
 
         $this->app->bind(EloquentModelBuilder::class, function ($app) {
