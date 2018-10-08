@@ -26,6 +26,8 @@ class Config
             $inputConfig = $this->merge($inputConfig, $appConfig);
         }
 
+        if(!isset($inputConfig['namespace']) && isset($inputConfig["output_path"])) $inputConfig['namespace'] = "App\\" . str_replace(DIRECTORY_SEPARATOR,"\\",substr($inputConfig["output_path"],0,-1));
+
         $this->config = $this->merge($inputConfig, $this->getBaseConfig());
     }
 
