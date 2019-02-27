@@ -1,3 +1,5 @@
+# Forked to allow attributes in pivotal tables
+
 # Eloquent Model Generator
 
 Eloquent Model Generator is a tool based on [Code Generator](https://github.com/krlove/code-generator) for generating Eloquent models.
