@@ -86,7 +86,11 @@ class RelationProcessor implements ProcessorInterface
                         continue;
                     }
 
-                    if (count($foreignKeys) === 2 && (count($table->getColumns()) === 2 || count((array) $table->getPrimaryKeyColumns())) {
+                    if (count($foreignKeys) === 2 && (
+                            count($table->getColumns()) === 2 || 
+                            count((array) $table->getPrimaryKeyColumns())
+                        )
+                     ) {
                         $keys = array_keys($foreignKeys);
                         $key = array_search($name, $keys) === 0 ? 1 : 0;
                         $secondForeignKey = $foreignKeys[$keys[$key]];
