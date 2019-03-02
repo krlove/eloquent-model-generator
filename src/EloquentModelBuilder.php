@@ -2,7 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-use Illuminate\Container\RewindableGenerator;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
@@ -20,12 +19,12 @@ class EloquentModelBuilder
 
     /**
      * EloquentModelBuilder constructor.
-     * @param ProcessorInterface[]|RewindableGenerator $processors
+     * @param ProcessorInterface[]|\IteratorAggregate $processors
      */
     public function __construct($processors)
     {
-        if ($processors instanceof RewindableGenerator) {
-            $this->processors = iterator_to_array($processors->getIterator());
+        if ($processors instanceof \IteratorAggregate) {
+            $this->processors = iterator_to_array($processors);
         } else {
             $this->processors = $processors;
         }
