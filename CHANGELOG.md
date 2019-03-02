@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2019-03-02, v1.3.2
+-----------------
+* Merged PR [#49](https://github.com/krlove/eloquent-model-generator/pull/49) (Compatible with Laravel 5.8)
+
 2018-07-26, v1.3.1
 -----------------
 * Add package autodiscovery feature (issue [#37](https://github.com/krlove/eloquent-model-generator/issues/37))
@@ -12,7 +16,7 @@ CHANGELOG
 
 2018-07-15, v1.2.7
 -----------------
-* Merged PR [#26](https://github.com/krlove/eloquent-model-generator/pull/36) (Change `incrementing` property to `public`)
+* Merged PR [#36](https://github.com/krlove/eloquent-model-generator/pull/36) (Change `incrementing` property to `public`)
 
 2017-07-19, v1.2.6
 -----------------
