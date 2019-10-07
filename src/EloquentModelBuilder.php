@@ -5,6 +5,7 @@ namespace Krlove\EloquentModelGenerator;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
+use Illuminate\Container\RewindableGenerator;
 
 /**
  * Class EloquentModelBuilder
@@ -19,11 +20,17 @@ class EloquentModelBuilder
 
     /**
      * EloquentModelBuilder constructor.
-     * @param ProcessorInterface[] $processors
+     * @param ProcessorInterface[]| RewindableGenerator $processors
      */
     public function __construct($processors)
     {
-        $this->processors = $processors;
+        // Rewritten to cope both with an array and an iterator. Laravel 6.0 compatibility
+        foreach ($processors as $processor) {
+            if (!$processor instanceof  ProcessorInterface) {
+                throw new \ErrorException("Expecting ProcessorInterface subclass, passed ". get_class($processor));
+            }
+            $this->processors[]=$processor;
+        }
     }
 
     /**
