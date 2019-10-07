@@ -5,7 +5,6 @@ namespace Krlove\EloquentModelGenerator;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
-use Illuminate\Container\RewindableGenerator;
 
 /**
  * Class EloquentModelBuilder
