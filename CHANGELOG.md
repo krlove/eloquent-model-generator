@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2019-10-12, v1.3.3
+-----------------
+* Add Laravel 6 support
+
 2019-03-02, v1.3.2
 -----------------
 * Merged PR [#49](https://github.com/krlove/eloquent-model-generator/pull/49) (Compatible with Laravel 5.8)
