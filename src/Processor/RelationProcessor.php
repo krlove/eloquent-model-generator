@@ -300,6 +300,8 @@ class RelationProcessor implements ProcessorInterface
      */
     protected function removePrefix($prefix, $tableName)
     {
+        $prefix = preg_quote($prefix, '/');
+
         return preg_replace("/^$prefix/", '', $tableName);
     }
 }

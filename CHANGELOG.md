@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2019-11-03, v1.3.4
+-----------------
+* Add quote for table prefix (issue [#59](https://github.com/krlove/eloquent-model-generator/issues/59))
+
 2019-10-12, v1.3.3
 -----------------
 * Add Laravel 6 support
