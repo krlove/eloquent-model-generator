@@ -8,6 +8,8 @@ use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Str;
+use DB;
 
 /**
  * Class GenerateModelCommand
@@ -49,10 +51,22 @@ class GenerateModelCommand extends Command
     public function fire()
     {
         $config = $this->createConfig();
-
-        $model = $this->generator->generateModel($config);
-
-        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        if (($this->argument('class-name')) !== NULL) {
+            $tableNames = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+            foreach($tableNames as $tableName){
+                $tableNameToSingular = Str::singular($tableName);
+                //Does not generate a model for many to many tables
+                if ($tableNameToSingular !== $tableName) {
+                    $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
+                    $config['class-name'] = $modelName;
+                    $model = $this->generator->generateModel($config);
+                    $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                }
+            }
+        } else {
+            $model = $this->generator->generateModel($config);
+            $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        }
     }
 
     /**
@@ -92,7 +106,7 @@ class GenerateModelCommand extends Command
     protected function getArguments()
     {
         return [
-            ['class-name', InputArgument::REQUIRED, 'Model class name'],
+            ['class-name', InputArgument::VALUE_OPTIONAL, 'Model class name'],
         ];
     }
 
