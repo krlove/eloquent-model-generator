@@ -14,6 +14,16 @@ class Config
     protected $config;
 
     /**
+     * @var string
+     */
+    protected $defaultSchemaName;
+
+    /**
+     * @var string
+     */
+    protected $schemaName;
+
+    /**
      * Config constructor.
      * @param array $inputConfig
      * @param array|null $appConfig
@@ -29,6 +39,30 @@ class Config
         $this->config = $this->merge($inputConfig, $this->getBaseConfig());
     }
 
+    public function getSchemaNameForQuery()
+    {
+        $schemaName = $this->getSchemaName();
+        //Cannot add the default schema name set in the connection for query
+        if ($schemaName === $this->defaultSchemaName) {
+            $schemaName = "";
+        }
+        if($schemaName !== ""){
+            $schemaName .= ".";
+        }
+        return $schemaName;
+    }
+
+    public function getSchemaName()
+    {
+        $schemaName = "";
+        if (isset($this->schemaName) && $this->schemaName !== "") {
+            $schemaName = $this->schemaName;
+        } elseif (isset($this->defaultSchemaName) && $this->defaultSchemaName !== "") {
+            $schemaName = $this->defaultSchemaName;
+        }
+        return $schemaName;
+    }
+
     /**
      * @param string     $key
      * @param mixed|null $default
@@ -40,12 +74,39 @@ class Config
     }
 
     /**
+     * @param string     $key
+     * @param mixed      $value
+     */
+    public function set($key, $value)
+    {
+        $this->config[$key] = $value;
+    }
+
+
+
+    /**
      * @param string $key
      * @return bool
      */
     public function has($key)
     {
         return isset($this->config[$key]);
+    }
+
+    /**
+     * @param string      $schemaName
+     */
+    public function setSchemaName(string $schemaName)
+    {
+        $this->schemaName = $schemaName;
+    }
+
+   /**
+     * @param string      $defaultSchemaName
+     */
+    public function setDefaultSchemaName(string $defaultSchemaName)
+    {
+        $this->defaultSchemaName = $defaultSchemaName;
     }
 
     /**

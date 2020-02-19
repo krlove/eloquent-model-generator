@@ -51,16 +51,28 @@ class GenerateModelCommand extends Command
     public function fire()
     {
         $config = $this->createConfig();
-        if (($this->argument('class-name')) !== NULL) {
-            $tableNames = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-            foreach($tableNames as $tableName){
-                $tableNameToSingular = Str::singular($tableName);
-                //Does not generate a model for many to many tables
-                if ($tableNameToSingular !== $tableName) {
-                    $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
-                    $config['class-name'] = $modelName;
-                    $model = $this->generator->generateModel($config);
-                    $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+       
+        if ($this->argument('class-name') === NULL) {
+            $tables = DB::connection()->getDoctrineSchemaManager()->listTables();
+            $defaultSchema = DB::connection()->getConfig()['schema'] ?? "";
+            foreach($tables as $table){
+                $currentSchema = $table->getNamespaceName();
+                if ($this->option('schema') === NULL || 
+                    ($this->option('schema') !== NULL && ($this->option('schema') === $currentSchema || ($currentSchema === NULL && $this->option('schema') === $defaultSchema)))
+                ) {
+                    $tableName = $table->getShortestName($currentSchema);
+                    $tableNameToSingular = Str::singular($tableName);
+                    
+                    //Does not generate a model for many to many tables
+                    if ($tableNameToSingular !== $tableName) {
+                        $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
+                        $config->set('class_name',$modelName);
+                        $config->set('table_name',$tableName);
+                        $config->setSchemaName($table->getNamespaceName() ?? "");
+                        $config->setDefaultSchemaName($defaultSchema);
+                        $model = $this->generator->generateModel($config);
+                        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                    }
                 }
             }
         } else {
@@ -94,9 +106,9 @@ class GenerateModelCommand extends Command
             }
             $config[$option[0]] = $value;
         }
-
+        
         $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
-
+        
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 
@@ -106,7 +118,7 @@ class GenerateModelCommand extends Command
     protected function getArguments()
     {
         return [
-            ['class-name', InputArgument::VALUE_OPTIONAL, 'Model class name'],
+            ['class-name', InputArgument::OPTIONAL, 'Model class name'],
         ];
     }
 
@@ -123,7 +135,9 @@ class GenerateModelCommand extends Command
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
-            ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null]
+            ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null],
+            ['force-table-name', 'ftn', InputOption::VALUE_NONE, 'Force tableName property to be always set', null],
+            ['schema', 's', InputOption::VALUE_OPTIONAL, 'Name of the database schema to generates models from, only used when class-name argument is not provided', null],
         ];
     }
 }

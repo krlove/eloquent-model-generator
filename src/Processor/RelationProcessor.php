@@ -57,15 +57,16 @@ class RelationProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
-        $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
+        $foreignKeys = $schemaManager->listTableForeignKeys($config->getSchemaNameForQuery() . $prefix . $model->getTableName());
         foreach ($foreignKeys as $tableForeignKey) {
             $tableForeignColumns = $tableForeignKey->getForeignColumns();
             if (count($tableForeignColumns) !== 1) {
                 continue;
             }
-
+            $foreignTable = $schemaManager->listTableDetails($tableForeignKey->getForeignTableName());
+            $foreignTableTableNameWithoutSchema = $this->removePrefix($prefix, $foreignTable->getShortestName($foreignTable->getNamespaceName()));
             $relation = new BelongsTo(
-                $this->removePrefix($prefix, $tableForeignKey->getForeignTableName()),
+                $this->removePrefix($prefix, $foreignTableTableNameWithoutSchema),
                 $tableForeignKey->getLocalColumns()[0],
                 $tableForeignColumns[0]
             );
@@ -74,27 +75,39 @@ class RelationProcessor implements ProcessorInterface
 
         $tables = $schemaManager->listTables();
         foreach ($tables as $table) {
-            if ($table->getName() === $prefix . $model->getTableName()) {
+            
+            if ($table->getName() === $config->getSchemaNameForQuery() . $prefix . $model->getTableName()) {
                 continue;
             }
 
             $foreignKeys = $table->getForeignKeys();
+            $primaryKeyColumnNames = [];
+            if ($table->getPrimaryKey()) {
+                $primaryKeyColumnNames = $table->getPrimaryKeyColumns();
+            }
             foreach ($foreignKeys as $name => $foreignKey) {
-                if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
+                if ($foreignKey->getForeignTableName() === $config->getSchemaNameForQuery() . $prefix . $model->getTableName()) {
                     $localColumns = $foreignKey->getLocalColumns();
                     if (count($localColumns) !== 1) {
                         continue;
                     }
-
-                    if (count($foreignKeys) === 2 && count($table->getColumns()) === 2) {
+                    $foreignKeysName = [];
+                    foreach ($foreignKeys as $foreignKey) {
+                        $foreignKeysColumnNames = array_merge($foreignKeysName,$foreignKey->getColumns());
+                    }
+                
+                    if (count($foreignKeys) === 2 && count(array_intersect($foreignKeysColumnNames,$primaryKeyColumnNames)) === 2) {
+                        $tableNameWithoutSchema = $table->getShortestName($table->getNamespaceName());
+                        
                         $keys = array_keys($foreignKeys);
                         $key = array_search($name, $keys) === 0 ? 1 : 0;
                         $secondForeignKey = $foreignKeys[$keys[$key]];
-                        $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
+                        $secondForeignTable = $schemaManager->listTableDetails($secondForeignKey->getForeignTableName());
+                        $secondForeignTableNameWithoutSchema = $this->removePrefix($prefix, $secondForeignTable->getShortestName($secondForeignTable->getNamespaceName()));
 
                         $relation = new BelongsToMany(
-                            $secondForeignTable,
-                            $this->removePrefix($prefix, $table->getName()),
+                            $secondForeignTableNameWithoutSchema,
+                            $this->removePrefix($prefix, $tableNameWithoutSchema),
                             $localColumns[0],
                             $secondForeignKey->getLocalColumns()[0]
                         );
@@ -102,14 +115,16 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
+                        $foreignTable = $foreignKey->getLocalTable();
+                        $foreignTableNameWithoutSchema = $foreignTable->getShortestName($foreignTable->getNamespaceName());
+                        $foreignTableNameWithoutSchema = $this->removePrefix($prefix, $foreignTableNameWithoutSchema);
                         $foreignColumn = $localColumns[0];
                         $localColumn = $foreignKey->getForeignColumns()[0];
 
                         if ($this->isColumnUnique($table, $foreignColumn)) {
-                            $relation = new HasOne($tableName, $foreignColumn, $localColumn);
+                            $relation = new HasOne($foreignTableNameWithoutSchema, $foreignColumn, $localColumn);
                         } else {
-                            $relation = new HasMany($tableName, $foreignColumn, $localColumn);
+                            $relation = new HasMany($foreignTableNameWithoutSchema, $foreignColumn, $localColumn);
                         }
 
                         $this->addRelation($model, $relation);
