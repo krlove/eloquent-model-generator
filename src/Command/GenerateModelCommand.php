@@ -57,21 +57,42 @@ class GenerateModelCommand extends Command
             $defaultSchema = DB::connection()->getConfig()['schema'] ?? "";
             foreach($tables as $table){
                 $currentSchema = $table->getNamespaceName();
+                $isManyToManyTable = FALSE;
                 if ($this->option('schema') === NULL || 
                     ($this->option('schema') !== NULL && ($this->option('schema') === $currentSchema || ($currentSchema === NULL && $this->option('schema') === $defaultSchema)))
                 ) {
-                    $tableName = $table->getShortestName($currentSchema);
-                    $tableNameToSingular = Str::singular($tableName);
+
+                    //Check if the table is a many to many relationship (having its primary key composed of 2 foreign keys)
+                    $primaryKey = $table->getPrimaryKey();
+                    $foreignKeys = $table->getForeignKeys();
                     
-                    //Does not generate a model for many to many tables
-                    if ($tableNameToSingular !== $tableName) {
-                        $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
-                        $config->set('class_name',$modelName);
-                        $config->set('table_name',$tableName);
-                        $config->setSchemaName($table->getNamespaceName() ?? "");
-                        $config->setDefaultSchemaName($defaultSchema);
-                        $model = $this->generator->generateModel($config);
-                        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                    if ($primaryKey !== NULL && count($foreignKeys) === 2) {
+                        $primaryKeyColumnNames = $table->getPrimaryKeyColumns();
+                        $foreignKeysColumnNames = [];
+                        foreach ($foreignKeys as $foreignKey) {
+                            $foreignKeysColumnNames = array_merge($foreignKeysColumnNames,$foreignKey->getColumns());
+                        }
+                        if (count(array_intersect($foreignKeysColumnNames,$primaryKeyColumnNames)) === 2) {
+                            $isManyToManyTable = TRUE;
+                        }
+                    }
+
+                    if (!$isManyToManyTable) {
+                        $tableName = $table->getShortestName($currentSchema);
+                        $tableNameToSingular = Str::singular($tableName);
+                        
+                        
+
+                        //Does not generate a model for many to many tables
+                        if ($tableNameToSingular !== $tableName) {
+                            $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
+                            $config->set('class_name',$modelName);
+                            $config->set('table_name',$tableName);
+                            $config->setSchemaName($table->getNamespaceName() ?? "");
+                            $config->setDefaultSchemaName($defaultSchema);
+                            $model = $this->generator->generateModel($config);
+                            $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                        }
                     }
                 }
             }
