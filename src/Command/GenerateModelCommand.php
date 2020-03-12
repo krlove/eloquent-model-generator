@@ -159,7 +159,7 @@ class GenerateModelCommand extends Command
             ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null],
             ['force-table-name', 'ftn', InputOption::VALUE_NONE, 'Force tableName property to be always set', null],
             ['schema', 's', InputOption::VALUE_OPTIONAL, 'Name of the database schema to generates models from, only used when class-name argument is not provided', null],
-            ['noDocBlock','ndoc', InputOption::VALUE_OPTIONAL, 'Does not generate the class php doc', null]
+            ['no-class-phpdoc-block','ncpb', InputOption::VALUE_OPTIONAL, 'Does not generate the class php doc', null]
         ];
     }
 }

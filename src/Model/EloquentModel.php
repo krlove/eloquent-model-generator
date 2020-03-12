@@ -15,6 +15,8 @@ class EloquentModel extends ClassModel
      */
     protected $tableName;
 
+    protected $addClassPhpDocBlock = TRUE;
+
     /**
      * @param string $tableName
      *
@@ -33,5 +35,19 @@ class EloquentModel extends ClassModel
     public function getTableName()
     {
         return $this->tableName;
+    }
+
+    public function setAddClassPhpDocBlock(bool $addClassPhpDocBlock){
+        $this->addClassPhpDocBlock = $addClassPhpDocBlock;
+    }
+
+    /**
+     * Convert virtual properties and methods to DocBlock content
+     */
+    protected function prepareDocBlock()
+    {
+        if($this->addClassPhpDocBlock === FALSE){
+            parent::prepareDocBlock();
+        }
     }
 }

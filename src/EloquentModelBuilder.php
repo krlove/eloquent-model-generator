@@ -17,8 +17,6 @@ class EloquentModelBuilder
      */
     protected $processors;
 
-    protected $addDocBlock = TRUE;
-
     /**
      * EloquentModelBuilder constructor.
      * @param ProcessorInterface[]|\IteratorAggregate $processors
@@ -41,14 +39,14 @@ class EloquentModelBuilder
     {
         $model = new EloquentModel();
 
+        if($config->get('no_class_phpdoc_block') === false){
+            $model->setAddClassPhpDocBlock(FALSE);
+        }
+
         $this->prepareProcessors();
 
         foreach ($this->processors as $processor) {
             $processor->process($model, $config);
-        }
-
-        if($config === false){
-            $this->addDocBlock = false;
         }
 
         return $model;
@@ -66,15 +64,5 @@ class EloquentModelBuilder
 
             return $one->getPriority() < $two->getPriority() ? 1 : -1;
         });
-    }
-
-    /**
-     * Convert virtual properties and methods to DocBlock content
-     */
-    protected function prepareDocBlock()
-    {
-        if($this->addDocBlock === FALSE){
-            parent::prepareDocBlock();
-        }
     }
 }
