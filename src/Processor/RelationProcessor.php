@@ -85,17 +85,21 @@ class RelationProcessor implements ProcessorInterface
             if ($table->getPrimaryKey()) {
                 $primaryKeyColumnNames = $table->getPrimaryKeyColumns();
             }
+            
+            $foreignKeysColumnNames = [];
+            if(count($foreignKeys) === 2){
+                foreach ($foreignKeys as $foreignKey) {
+                    $foreignKeysColumnNames = array_merge($foreignKeysColumnNames,$foreignKey->getColumns());
+                }
+            }
+            
             foreach ($foreignKeys as $name => $foreignKey) {
                 if ($foreignKey->getForeignTableName() === $config->getSchemaNameForQuery() . $prefix . $model->getTableName()) {
                     $localColumns = $foreignKey->getLocalColumns();
                     if (count($localColumns) !== 1) {
                         continue;
                     }
-                    $foreignKeysName = [];
-                    foreach ($foreignKeys as $foreignKey) {
-                        $foreignKeysColumnNames = array_merge($foreignKeysName,$foreignKey->getColumns());
-                    }
-                
+                    
                     if (count($foreignKeys) === 2 && count(array_intersect($foreignKeysColumnNames,$primaryKeyColumnNames)) === 2) {
                         $tableNameWithoutSchema = $table->getShortestName($table->getNamespaceName());
                         
