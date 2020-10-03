@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2020-10-03, v1.3.6
+-----------------
+* Add Laravel 8 support
+
 2020-09-04, v1.3.5
 -----------------
 * Merged PR [#69](https://github.com/krlove/eloquent-model-generator/pull/69) (Update composer.json)
