@@ -26,9 +26,6 @@ class TableNameProcessor implements ProcessorInterface
         $this->helper = $helper;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function process(EloquentModel $model, Config $config)
     {
         $className     = $config->get('class_name');
@@ -46,9 +43,6 @@ class TableNameProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority()
     {
         return 10;

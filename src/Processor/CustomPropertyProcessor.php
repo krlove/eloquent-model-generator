@@ -9,9 +9,6 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class CustomPropertyProcessor implements ProcessorInterface
 {
-    /**
-     * @inheritdoc
-     */
     public function process(EloquentModel $model, Config $config)
     {
         if ($config->get('no_timestamps') === true) {
@@ -39,9 +36,6 @@ class CustomPropertyProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority()
     {
         return 5;

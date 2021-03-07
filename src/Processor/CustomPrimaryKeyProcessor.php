@@ -32,9 +32,6 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
         $this->typeRegistry = $typeRegistry;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function process(EloquentModel $model, Config $config)
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
@@ -79,9 +76,6 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority()
     {
         return 6;

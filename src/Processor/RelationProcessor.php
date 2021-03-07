@@ -45,9 +45,6 @@ class RelationProcessor implements ProcessorInterface
         $this->helper = $helper;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function process(EloquentModel $model, Config $config)
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
@@ -115,9 +112,6 @@ class RelationProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority()
     {
         return 5;

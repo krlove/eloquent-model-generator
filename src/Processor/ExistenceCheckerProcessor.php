@@ -23,9 +23,6 @@ class ExistenceCheckerProcessor implements ProcessorInterface
         $this->databaseManager = $databaseManager;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function process(EloquentModel $model, Config $config)
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
@@ -36,9 +33,6 @@ class ExistenceCheckerProcessor implements ProcessorInterface
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getPriority()
     {
         return 8;
