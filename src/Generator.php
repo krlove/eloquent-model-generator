@@ -36,45 +36,7 @@ class Generator
     {
         $this->registerUserTypes($config);
 
-        $model   = $this->builder->createModel($config);
-        $content = $model->render();
-
-        $outputPath = $this->resolveOutputPath($config);
-        if ($config->get('backup') && file_exists($outputPath)) {
-            rename($outputPath, $outputPath . '~');
-        }
-        file_put_contents($outputPath, $content);
-
-        return $model;
-    }
-
-    /**
-     * @param Config $config
-     * @return string
-     * @throws GeneratorException
-     */
-    protected function resolveOutputPath(Config $config)
-    {
-        $path = $config->get('output_path');
-        if ($path === null || stripos($path, '/') !== 0) {
-            if (function_exists('app_path')) {
-                $path = app_path($path);
-            } else {
-                $path = app('path') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-            }
-        }
-
-        if (!is_dir($path)) {
-            if (!mkdir($path, 0777, true)) {
-                throw new GeneratorException(sprintf('Could not create directory %s', $path));
-            }
-        }
-
-        if (!is_writeable($path)) {
-            throw new GeneratorException(sprintf('%s is not writeable', $path));
-        }
-
-        return $path . '/' . $config->get('class_name') . '.php';
+        return $this->builder->createModel($config);
     }
 
     /**

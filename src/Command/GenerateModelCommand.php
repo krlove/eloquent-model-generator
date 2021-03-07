@@ -5,7 +5,9 @@ namespace Krlove\EloquentModelGenerator\Command;
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Generator;
+use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -46,6 +48,7 @@ class GenerateModelCommand extends Command
         $config = $this->createConfig();
 
         $model = $this->generator->generateModel($config);
+        $this->saveModel($model, $config);
 
         $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
     }
@@ -79,6 +82,51 @@ class GenerateModelCommand extends Command
         $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
 
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
+    }
+
+    /**
+     * @param EloquentModel $model
+     * @param Config $config
+     * @throws GeneratorException
+     */
+    protected function saveModel(EloquentModel $model, Config $config)
+    {
+        $content = $model->render();
+
+        $outputPath = $this->resolveOutputPath($config);
+        if ($config->get('backup') && file_exists($outputPath)) {
+            rename($outputPath, $outputPath . '~');
+        }
+        file_put_contents($outputPath, $content);
+    }
+
+    /**
+     * @param Config $config
+     * @return string
+     * @throws GeneratorException
+     */
+    protected function resolveOutputPath(Config $config)
+    {
+        $path = $config->get('output_path');
+        if ($path === null || stripos($path, '/') !== 0) {
+            if (function_exists('app_path')) {
+                $path = app_path($path);
+            } else {
+                $path = app('path') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+            }
+        }
+
+        if (!is_dir($path)) {
+            if (!mkdir($path, 0777, true)) {
+                throw new GeneratorException(sprintf('Could not create directory %s', $path));
+            }
+        }
+
+        if (!is_writeable($path)) {
+            throw new GeneratorException(sprintf('%s is not writeable', $path));
+        }
+
+        return $path . '/' . $config->get('class_name') . '.php';
     }
 
     /**
