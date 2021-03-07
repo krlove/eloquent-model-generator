@@ -1,5 +1,9 @@
 CHANGELOG
 =========
+2021-03-07, v1.3.7
+-----------------
+* Add Doctrine DBAL 3.0 support
+
 2020-10-03, v1.3.6
 -----------------
 * Add Laravel 8 support
