@@ -7,10 +7,6 @@ use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
-/**
- * Class ExistenceCheckerProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class ExistenceCheckerProcessor implements ProcessorInterface
 {
     /**

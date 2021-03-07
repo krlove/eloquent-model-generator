@@ -9,10 +9,6 @@ use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 
-/**
- * Class CustomPrimaryKeyProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class CustomPrimaryKeyProcessor implements ProcessorInterface
 {
     /**

@@ -5,10 +5,6 @@ namespace Krlove\EloquentModelGenerator\Processor;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
-/**
- * Interface ProcessorInterface
- * @package Krlove\EloquentModelGenerator\Processor
- */
 interface ProcessorInterface
 {
     /**

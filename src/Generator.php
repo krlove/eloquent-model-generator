@@ -5,10 +5,6 @@ namespace Krlove\EloquentModelGenerator;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\CodeGenerator\Model\ClassModel;
 
-/**
- * Class Generator
- * @package Krlove\Generator
- */
 class Generator
 {
     /**

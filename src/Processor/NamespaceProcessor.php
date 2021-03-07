@@ -6,10 +6,6 @@ use Krlove\CodeGenerator\Model\NamespaceModel;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
-/**
- * Class NamespaceProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class NamespaceProcessor implements ProcessorInterface
 {
     /**

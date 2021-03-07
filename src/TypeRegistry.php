@@ -4,10 +4,6 @@ namespace Krlove\EloquentModelGenerator;
 
 use Illuminate\Database\DatabaseManager;
 
-/**
- * Class TypeRegistry
- * @package Krlove\EloquentModelGenerator
- */
 class TypeRegistry
 {
     /**

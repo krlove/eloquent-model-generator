@@ -7,10 +7,6 @@ use Krlove\CodeGenerator\Model\PropertyModel;
 use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
-/**
- * Class CustomPropertyProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class CustomPropertyProcessor implements ProcessorInterface
 {
     /**

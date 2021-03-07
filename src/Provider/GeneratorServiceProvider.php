@@ -13,10 +13,6 @@ use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
 
-/**
- * Class GeneratorServiceProvider
- * @package Krlove\EloquentModelGenerator\Provider
- */
 class GeneratorServiceProvider extends ServiceProvider
 {
     const PROCESSOR_TAG = 'eloquent_model_generator.processor';

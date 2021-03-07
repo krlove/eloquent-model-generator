@@ -10,10 +10,6 @@ use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
-/**
- * Class TableNameProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class TableNameProcessor implements ProcessorInterface
 {
     /**

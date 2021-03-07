@@ -4,10 +4,6 @@ namespace Krlove\EloquentModelGenerator\Model;
 
 use Krlove\CodeGenerator\Model\ClassModel;
 
-/**
- * Class EloquentModel
- * @package Krlove\EloquentModelGenerator\Model
- */
 class EloquentModel extends ClassModel
 {
     /**

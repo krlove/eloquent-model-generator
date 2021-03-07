@@ -22,10 +22,6 @@ use Krlove\EloquentModelGenerator\Model\HasMany;
 use Krlove\EloquentModelGenerator\Model\HasOne;
 use Krlove\EloquentModelGenerator\Model\Relation;
 
-/**
- * Class RelationProcessor
- * @package Krlove\EloquentModelGenerator\Processor
- */
 class RelationProcessor implements ProcessorInterface
 {
     /**

@@ -9,10 +9,6 @@ use Krlove\EloquentModelGenerator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * Class GenerateModelCommand
- * @package Krlove\EloquentModelGenerator\Command
- */
 class GenerateModelCommand extends Command
 {
     /**

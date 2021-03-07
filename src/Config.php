@@ -2,10 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-/**
- * Class Config
- * @package Krlove\EloquentModelGenerator
- */
 class Config
 {
     /**

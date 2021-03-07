@@ -2,10 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator\Model;
 
-/**
- * Class Relation
- * @package Krlove\EloquentModelGenerator\Model
- */
 abstract class Relation
 {
     /**
