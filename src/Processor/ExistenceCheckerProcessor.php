@@ -15,7 +15,6 @@ class ExistenceCheckerProcessor implements ProcessorInterface
     protected $databaseManager;
 
     /**
-     * ExistenceCheckerProcessor constructor.
      * @param DatabaseManager $databaseManager
      */
     public function __construct(DatabaseManager $databaseManager)

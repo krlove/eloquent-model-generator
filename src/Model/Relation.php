@@ -20,7 +20,6 @@ abstract class Relation
     protected $localColumnName;
 
     /**
-     * Relation constructor.
      * @param string $tableName
      * @param string $joinColumnName
      * @param string $localColumnName

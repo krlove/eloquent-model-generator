@@ -27,7 +27,6 @@ class GenerateModelCommand extends Command
     protected $appConfig;
 
     /**
-     * GenerateModelCommand constructor.
      * @param Generator $generator
      * @param AppConfig $appConfig
      */

@@ -22,7 +22,6 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
     protected $typeRegistry;
 
     /**
-     * FieldProcessor constructor.
      * @param DatabaseManager $databaseManager
      * @param TypeRegistry $typeRegistry
      */

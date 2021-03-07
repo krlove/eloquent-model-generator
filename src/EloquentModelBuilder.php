@@ -14,7 +14,6 @@ class EloquentModelBuilder
     protected $processors;
 
     /**
-     * EloquentModelBuilder constructor.
      * @param ProcessorInterface[]|\IteratorAggregate $processors
      */
     public function __construct($processors)

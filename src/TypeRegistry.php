@@ -37,7 +37,6 @@ class TypeRegistry
     protected $databaseManager;
 
     /**
-     * TypeRegistry constructor.
      * @param DatabaseManager $databaseManager
      */
     public function __construct(DatabaseManager $databaseManager)

@@ -18,7 +18,6 @@ class Generator
     protected $typeRegistry;
 
     /**
-     * Generator constructor.
      * @param EloquentModelBuilder $builder
      * @param TypeRegistry $typeRegistry
      */

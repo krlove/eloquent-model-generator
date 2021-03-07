@@ -10,7 +10,6 @@ class Config
     protected $config;
 
     /**
-     * Config constructor.
      * @param array $inputConfig
      * @param array|null $appConfig
      */

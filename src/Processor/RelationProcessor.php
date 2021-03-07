@@ -35,7 +35,6 @@ class RelationProcessor implements ProcessorInterface
     protected $helper;
 
     /**
-     * FieldProcessor constructor.
      * @param DatabaseManager $databaseManager
      * @param EmgHelper $helper
      */

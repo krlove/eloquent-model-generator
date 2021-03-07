@@ -18,7 +18,6 @@ class TableNameProcessor implements ProcessorInterface
     protected $helper;
 
     /**
-     * TableNameProcessor constructor.
      * @param EmgHelper $helper
      */
     public function __construct(EmgHelper $helper)
