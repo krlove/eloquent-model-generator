@@ -8,6 +8,8 @@ use Krlove\EloquentModelGenerator\Config;
 use Krlove\EloquentModelGenerator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Illuminate\Support\Str;
+use DB;
 
 /**
  * Class GenerateModelCommand
@@ -49,10 +51,55 @@ class GenerateModelCommand extends Command
     public function fire()
     {
         $config = $this->createConfig();
+       
+        if ($this->argument('class-name') === NULL) {
+            $tables = DB::connection()->getDoctrineSchemaManager()->listTables();
+            $defaultSchema = DB::connection()->getConfig()['schema'] ?? "";
+            foreach($tables as $table){
+                $currentSchema = $table->getNamespaceName();
+                $isManyToManyTable = FALSE;
+                if ($this->option('schema') === NULL || 
+                    ($this->option('schema') !== NULL && ($this->option('schema') === $currentSchema || ($currentSchema === NULL && $this->option('schema') === $defaultSchema)))
+                ) {
 
-        $model = $this->generator->generateModel($config);
+                    //Check if the table is a many to many relationship (having its primary key composed of 2 foreign keys)
+                    $primaryKey = $table->getPrimaryKey();
+                    $foreignKeys = $table->getForeignKeys();
+                    
+                    if ($primaryKey !== NULL && count($foreignKeys) === 2) {
+                        $primaryKeyColumnNames = $table->getPrimaryKeyColumns();
+                        $foreignKeysColumnNames = [];
+                        foreach ($foreignKeys as $foreignKey) {
+                            $foreignKeysColumnNames = array_merge($foreignKeysColumnNames,$foreignKey->getColumns());
+                        }
+                        if (count(array_intersect($foreignKeysColumnNames,$primaryKeyColumnNames)) === 2) {
+                            $isManyToManyTable = TRUE;
+                        }
+                    }
 
-        $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                    if (!$isManyToManyTable) {
+                        $tableName = $table->getShortestName($currentSchema);
+                        $tableNameToSingular = Str::singular($tableName);
+                        
+                        
+
+                        //Does not generate a model for many to many tables
+                        if ($tableNameToSingular !== $tableName) {
+                            $modelName = ucfirst(Str::camel(Str::singular($tableNameToSingular)));
+                            $config->set('class_name',$modelName);
+                            $config->set('table_name',$tableName);
+                            $config->setSchemaName($table->getNamespaceName() ?? "");
+                            $config->setDefaultSchemaName($defaultSchema);
+                            $model = $this->generator->generateModel($config);
+                            $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+                        }
+                    }
+                }
+            }
+        } else {
+            $model = $this->generator->generateModel($config);
+            $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
+        }
     }
 
     /**
@@ -80,9 +127,9 @@ class GenerateModelCommand extends Command
             }
             $config[$option[0]] = $value;
         }
-
+        
         $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
-
+        
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 
@@ -92,7 +139,7 @@ class GenerateModelCommand extends Command
     protected function getArguments()
     {
         return [
-            ['class-name', InputArgument::REQUIRED, 'Model class name'],
+            ['class-name', InputArgument::OPTIONAL, 'Model class name'],
         ];
     }
 
@@ -109,7 +156,10 @@ class GenerateModelCommand extends Command
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
-            ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null]
+            ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null],
+            ['force-table-name', 'ftn', InputOption::VALUE_NONE, 'Force tableName property to be always set', null],
+            ['schema', 's', InputOption::VALUE_OPTIONAL, 'Name of the database schema to generates models from, only used when class-name argument is not provided', null],
+            ['no-class-phpdoc-block','ncpb', InputOption::VALUE_OPTIONAL, 'Does not generate the class php doc', null]
         ];
     }
 }

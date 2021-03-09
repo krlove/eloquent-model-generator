@@ -35,8 +35,8 @@ class ExistenceCheckerProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
-        if (!$schemaManager->tablesExist($prefix . $model->getTableName())) {
-            throw new GeneratorException(sprintf('Table %s does not exist', $prefix . $model->getTableName()));
+        if (!$schemaManager->tablesExist($config->getSchemaNameForQuery() . $prefix . $model->getTableName())) {
+            throw new GeneratorException(sprintf('Table %s does not exist', $config->getSchemaNameForQuery() . $prefix . $model->getTableName()));
         }
     }
 

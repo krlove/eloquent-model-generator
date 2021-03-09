@@ -43,8 +43,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
-
-        $tableDetails = $schemaManager->listTableDetails($prefix . $model->getTableName());
+        $tableDetails = $schemaManager->listTableDetails($config->getSchemaNameForQuery() . $prefix . $model->getTableName());
         $primaryKey = $tableDetails->getPrimaryKey();
         if ($primaryKey === null) {
             return;

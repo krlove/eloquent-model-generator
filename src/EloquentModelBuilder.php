@@ -39,6 +39,10 @@ class EloquentModelBuilder
     {
         $model = new EloquentModel();
 
+        if($config->get('no_class_phpdoc_block') === false){
+            $model->setAddClassPhpDocBlock(FALSE);
+        }
+
         $this->prepareProcessors();
 
         foreach ($this->processors as $processor) {
