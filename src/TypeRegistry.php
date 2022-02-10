@@ -6,10 +6,7 @@ use Illuminate\Database\DatabaseManager;
 
 class TypeRegistry
 {
-    /**
-     * @var array
-     */
-    protected $types = [
+    protected array $types = [
         'array'        => 'array',
         'simple_array' => 'array',
         'json_array'   => 'string',
@@ -31,26 +28,14 @@ class TypeRegistry
         'guid'         => 'string',
     ];
 
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected DatabaseManager $databaseManager;
 
-    /**
-     * @param DatabaseManager $databaseManager
-     */
     public function __construct(DatabaseManager $databaseManager)
     {
         $this->databaseManager = $databaseManager;
     }
 
-    /**
-     * @param string $type
-     * @param string $value
-     * @param string|null $connection
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function registerType($type, $value, $connection = null)
+    public function registerType(string $type, string $value, string $connection = null): void
     {
         $this->types[$type] = $value;
 
@@ -58,12 +43,7 @@ class TypeRegistry
         $manager->getDatabasePlatform()->registerDoctrineTypeMapping($type, $value);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    public function resolveType($type)
+    public function resolveType(string $type): string
     {
         return array_key_exists($type, $this->types) ? $this->types[$type] : 'mixed';
     }

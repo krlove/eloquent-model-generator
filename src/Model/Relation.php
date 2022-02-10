@@ -4,87 +4,47 @@ namespace Krlove\EloquentModelGenerator\Model;
 
 abstract class Relation
 {
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
+    protected string $foreignColumnName;
+    protected string $localColumnName;
 
-    /**
-     * @var string
-     */
-    protected $foreignColumnName;
-
-    /**
-     * @var string
-     */
-    protected $localColumnName;
-
-    /**
-     * @param string $tableName
-     * @param string $joinColumnName
-     * @param string $localColumnName
-     */
-    public function __construct($tableName, $joinColumnName, $localColumnName)
+    public function __construct(string $tableName, string $joinColumnName, string $localColumnName)
     {
         $this->setTableName($tableName);
         $this->setForeignColumnName($joinColumnName);
         $this->setLocalColumnName($localColumnName);
     }
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return $this
-     */
-    public function setTableName($tableName)
+    public function setTableName(string $tableName): self
     {
         $this->tableName = $tableName;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getForeignColumnName()
+    public function getForeignColumnName(): string
     {
         return $this->foreignColumnName;
     }
 
-    /**
-     * @param string $foreignColumnName
-     *
-     * @return $this
-     */
-    public function setForeignColumnName($foreignColumnName)
+    public function setForeignColumnName(string $foreignColumnName): self
     {
         $this->foreignColumnName = $foreignColumnName;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocalColumnName()
+    public function getLocalColumnName(): string
     {
         return $this->localColumnName;
     }
 
-    /**
-     * @param string $localColumnName
-     *
-     * @return $this
-     */
-    public function setLocalColumnName($localColumnName)
+    public function setLocalColumnName(string $localColumnName): self
     {
         $this->localColumnName = $localColumnName;
 

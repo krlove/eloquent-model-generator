@@ -8,12 +8,12 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class NamespaceProcessor implements ProcessorInterface
 {
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $model->setNamespace(new NamespaceModel($config->get('namespace')));
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 6;
     }

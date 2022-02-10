@@ -12,28 +12,23 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class TableNameProcessor implements ProcessorInterface
 {
-    /**
-     * @var EmgHelper
-     */
-    protected $helper;
+    protected EmgHelper $helper;
 
-    /**
-     * @param EmgHelper $helper
-     */
     public function __construct(EmgHelper $helper)
     {
         $this->helper = $helper;
     }
 
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
-        $className     = $config->get('class_name');
+        $className = $config->get('class_name');
         $baseClassName = $config->get('base_class_name');
-        $tableName     = $config->get('table_name');
+        $tableName = $config->get('table_name');
 
-        $model->setName(new ClassNameModel($className, $this->helper->getShortClassName($baseClassName)));
-        $model->addUses(new UseClassModel(ltrim($baseClassName, '\\')));
-        $model->setTableName($tableName ?: $this->helper->getDefaultTableName($className));
+        $model
+            ->setName(new ClassNameModel($className, $this->helper->getShortClassName($baseClassName)))
+            ->addUses(new UseClassModel(ltrim($baseClassName, '\\')))
+            ->setTableName($tableName ?: $this->helper->getDefaultTableName($className));
 
         if ($model->getTableName() !== $this->helper->getDefaultTableName($className)) {
             $property = new PropertyModel('table', 'protected', $model->getTableName());
@@ -42,7 +37,7 @@ class TableNameProcessor implements ProcessorInterface
         }
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 10;
     }

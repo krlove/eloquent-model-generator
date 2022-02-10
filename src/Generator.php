@@ -2,47 +2,27 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-use Krlove\EloquentModelGenerator\Exception\GeneratorException;
-use Krlove\CodeGenerator\Model\ClassModel;
+use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class Generator
 {
-    /**
-     * @var EloquentModelBuilder
-     */
-    protected $builder;
+    protected EloquentModelBuilder $builder;
+    protected TypeRegistry $typeRegistry;
 
-    /**
-     * @var TypeRegistry
-     */
-    protected $typeRegistry;
-
-    /**
-     * @param EloquentModelBuilder $builder
-     * @param TypeRegistry $typeRegistry
-     */
     public function __construct(EloquentModelBuilder $builder, TypeRegistry $typeRegistry)
     {
         $this->builder = $builder;
         $this->typeRegistry = $typeRegistry;
     }
 
-    /**
-     * @param Config $config
-     * @return ClassModel
-     * @throws GeneratorException
-     */
-    public function generateModel(Config $config)
+    public function generateModel(Config $config): EloquentModel
     {
         $this->registerUserTypes($config);
 
         return $this->builder->createModel($config);
     }
 
-    /**
-     * @param Config $config
-     */
-    protected function registerUserTypes(Config $config)
+    protected function registerUserTypes(Config $config): void
     {
         $userTypes = $config->get('db_types');
         if ($userTypes && is_array($userTypes)) {

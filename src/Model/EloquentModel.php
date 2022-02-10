@@ -6,27 +6,16 @@ use Krlove\CodeGenerator\Model\ClassModel;
 
 class EloquentModel extends ClassModel
 {
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
 
-    /**
-     * @param string $tableName
-     *
-     * @return $this
-     */
-    public function setTableName($tableName)
+    public function setTableName(string $tableName): self
     {
         $this->tableName = $tableName;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }

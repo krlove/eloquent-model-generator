@@ -9,20 +9,14 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class ExistenceCheckerProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected DatabaseManager $databaseManager;
 
-    /**
-     * @param DatabaseManager $databaseManager
-     */
     public function __construct(DatabaseManager $databaseManager)
     {
         $this->databaseManager = $databaseManager;
     }
 
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -32,7 +26,7 @@ class ExistenceCheckerProcessor implements ProcessorInterface
         }
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 8;
     }

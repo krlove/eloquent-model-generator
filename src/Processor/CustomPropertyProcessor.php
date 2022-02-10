@@ -9,7 +9,7 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class CustomPropertyProcessor implements ProcessorInterface
 {
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         if ($config->get('no_timestamps') === true) {
             $pNoTimestamps = new PropertyModel('timestamps', 'public', false);
@@ -36,7 +36,7 @@ class CustomPropertyProcessor implements ProcessorInterface
         }
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }

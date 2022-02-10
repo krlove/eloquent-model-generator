@@ -2,7 +2,7 @@
 
 namespace Krlove\EloquentModelGenerator;
 
-use Krlove\EloquentModelGenerator\Exception\GeneratorException;
+use IteratorAggregate;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
 
@@ -11,30 +11,25 @@ class EloquentModelBuilder
     /**
      * @var ProcessorInterface[]
      */
-    protected $processors;
+    protected array $processors;
 
     /**
-     * @param ProcessorInterface[]|\IteratorAggregate $processors
+     * @param ProcessorInterface[]|IteratorAggregate $processors
      */
-    public function __construct($processors)
+    public function __construct(iterable $processors)
     {
-        if ($processors instanceof \IteratorAggregate) {
+        if ($processors instanceof IteratorAggregate) {
             $this->processors = iterator_to_array($processors);
         } else {
             $this->processors = $processors;
         }
     }
 
-    /**
-     * @param Config $config
-     * @return EloquentModel
-     * @throws GeneratorException
-     */
-    public function createModel(Config $config)
+    public function createModel(Config $config): EloquentModel
     {
         $model = new EloquentModel();
 
-        $this->prepareProcessors();
+        $this->sortProcessorsByPriority();
 
         foreach ($this->processors as $processor) {
             $processor->process($model, $config);
@@ -43,10 +38,7 @@ class EloquentModelBuilder
         return $model;
     }
 
-    /**
-     * Sort processors by priority
-     */
-    protected function prepareProcessors()
+    protected function sortProcessorsByPriority(): void
     {
         usort($this->processors, function (ProcessorInterface $one, ProcessorInterface $two) {
             if ($one->getPriority() == $two->getPriority()) {

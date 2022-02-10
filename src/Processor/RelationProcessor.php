@@ -24,27 +24,16 @@ use Krlove\EloquentModelGenerator\Model\Relation;
 
 class RelationProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected DatabaseManager $databaseManager;
+    protected EmgHelper $helper;
 
-    /**
-     * @var EmgHelper
-     */
-    protected $helper;
-
-    /**
-     * @param DatabaseManager $databaseManager
-     * @param EmgHelper $helper
-     */
     public function __construct(DatabaseManager $databaseManager, EmgHelper $helper)
     {
         $this->databaseManager = $databaseManager;
         $this->helper = $helper;
     }
 
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
@@ -111,17 +100,12 @@ class RelationProcessor implements ProcessorInterface
         }
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }
 
-    /**
-     * @param Table $table
-     * @param string $column
-     * @return bool
-     */
-    protected function isColumnUnique(Table $table, $column)
+    protected function isColumnUnique(Table $table, string $column): bool
     {
         foreach ($table->getIndexes() as $index) {
             $indexColumns = $index->getColumns();
@@ -137,12 +121,7 @@ class RelationProcessor implements ProcessorInterface
         return false;
     }
 
-    /**
-     * @param EloquentModel $model
-     * @param Relation $relation
-     * @throws GeneratorException
-     */
-    protected function addRelation(EloquentModel $model, Relation $relation)
+    protected function addRelation(EloquentModel $model, Relation $relation): void
     {
         $relationClass = Str::singular(Str::studly($relation->getTableName()));
         if ($relation instanceof HasOne) {
@@ -177,12 +156,7 @@ class RelationProcessor implements ProcessorInterface
         $model->addProperty(new VirtualPropertyModel($name, $virtualPropertyType));
     }
 
-    /**
-     * @param EloquentModel $model
-     * @param Relation $relation
-     * @return string
-     */
-    protected function createMethodBody(EloquentModel $model, Relation $relation)
+    protected function createMethodBody(EloquentModel $model, Relation $relation): string
     {
         $reflectionObject = new \ReflectionObject($relation);
         $name = Str::camel($reflectionObject->getShortName());
@@ -232,11 +206,7 @@ class RelationProcessor implements ProcessorInterface
         return sprintf('return $this->%s(%s);', $name, $this->prepareArguments($arguments));
     }
 
-    /**
-     * @param array $array
-     * @return array
-     */
-    protected function prepareArguments(array $array)
+    protected function prepareArguments(array $array): string
     {
         $array = array_reverse($array);
         $milestone = false;
@@ -260,34 +230,12 @@ class RelationProcessor implements ProcessorInterface
         return implode(', ', array_reverse($array));
     }
 
-    /**
-     * @param string $actual
-     * @param string $default
-     * @return string|null
-     */
-    protected function resolveArgument($actual, $default)
+    protected function resolveArgument(string $actual, string $default): ?string
     {
         return $actual === $default ? null : $actual;
     }
 
-    /**
-     * todo: move to helper
-     * @param string $prefix
-     * @param string $tableName
-     * @return string
-     */
-    protected function addPrefix($prefix, $tableName)
-    {
-        return $prefix . $tableName;
-    }
-
-    /**
-     * todo: move to helper
-     * @param string $prefix
-     * @param string $tableName
-     * @return string
-     */
-    protected function removePrefix($prefix, $tableName)
+    protected function removePrefix(string $prefix, string $tableName): string
     {
         $prefix = preg_quote($prefix, '/');
 

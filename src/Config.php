@@ -4,51 +4,30 @@ namespace Krlove\EloquentModelGenerator;
 
 class Config
 {
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
-    /**
-     * @param array $inputConfig
-     * @param array|null $appConfig
-     */
-    public function __construct($inputConfig, $appConfig = null)
+    public function __construct(array $inputConfig, array $appConfig = [])
     {
         $inputConfig = $this->resolveKeys($inputConfig);
 
-        if ($appConfig !== null && is_array($appConfig)) {
+        if (count($appConfig) > 0) {
             $inputConfig = $this->merge($inputConfig, $appConfig);
         }
 
         $this->config = $this->merge($inputConfig, $this->getBaseConfig());
     }
 
-    /**
-     * @param string     $key
-     * @param mixed|null $default
-     * @return mixed|null
-     */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->has($key) ? $this->config[$key] : $default;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function has($key)
+    public function has(string $key): bool
     {
         return isset($this->config[$key]);
     }
 
-    /**
-     * @param array $high
-     * @param array $low
-     * @return array
-     */
-    protected function merge(array $high, array $low)
+    protected function merge(array $high, array $low): array
     {
         foreach ($high as $key => $value)
         {
@@ -60,11 +39,7 @@ class Config
         return $low;
     }
 
-    /**
-     * @param array $array
-     * @return array
-     */
-    protected function resolveKeys(array $array)
+    protected function resolveKeys(array $array): array
     {
         $resolved = [];
         foreach ($array as $key => $value) {
@@ -75,19 +50,12 @@ class Config
         return $resolved;
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    protected function resolveKey($key)
+    protected function resolveKey(string $key): string
     {
         return str_replace('-', '_', strtolower($key));
     }
 
-    /**
-     * @return array
-     */
-    protected function getBaseConfig()
+    protected function getBaseConfig(): array
     {
         return require __DIR__ . '/Resources/config.php';
     }

@@ -13,25 +13,11 @@ use Symfony\Component\Console\Input\InputOption;
 
 class GenerateModelCommand extends Command
 {
-    /**
-     * @var string
-     */
     protected $name = 'krlove:generate:model';
 
-    /**
-     * @var Generator
-     */
-    protected $generator;
+    protected Generator $generator;
+    protected AppConfig $appConfig;
 
-    /**
-     * @var AppConfig
-     */
-    protected $appConfig;
-
-    /**
-     * @param Generator $generator
-     * @param AppConfig $appConfig
-     */
     public function __construct(Generator $generator, AppConfig $appConfig)
     {
         parent::__construct();
@@ -40,10 +26,7 @@ class GenerateModelCommand extends Command
         $this->appConfig = $appConfig;
     }
 
-    /**
-     * Executes the command
-     */
-    public function fire()
+    public function handle()
     {
         $config = $this->createConfig();
 
@@ -53,18 +36,7 @@ class GenerateModelCommand extends Command
         $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
     }
 
-    /**
-     * Add support for Laravel 5.5
-     */
-    public function handle()
-    {
-        $this->fire();
-    }
-
-    /**
-     * @return Config
-     */
-    protected function createConfig()
+    protected function createConfig(): Config
     {
         $config = [];
 
@@ -84,12 +56,7 @@ class GenerateModelCommand extends Command
         return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
     }
 
-    /**
-     * @param EloquentModel $model
-     * @param Config $config
-     * @throws GeneratorException
-     */
-    protected function saveModel(EloquentModel $model, Config $config)
+    protected function saveModel(EloquentModel $model, Config $config): void
     {
         $content = $model->render();
 
@@ -100,12 +67,7 @@ class GenerateModelCommand extends Command
         file_put_contents($outputPath, $content);
     }
 
-    /**
-     * @param Config $config
-     * @return string
-     * @throws GeneratorException
-     */
-    protected function resolveOutputPath(Config $config)
+    protected function resolveOutputPath(Config $config): string
     {
         $path = $config->get('output_path');
         if ($path === null || stripos($path, '/') !== 0) {
@@ -129,9 +91,6 @@ class GenerateModelCommand extends Command
         return $path . '/' . $config->get('class_name') . '.php';
     }
 
-    /**
-     * @return array
-     */
     protected function getArguments()
     {
         return [
@@ -139,9 +98,6 @@ class GenerateModelCommand extends Command
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getOptions()
     {
         return [

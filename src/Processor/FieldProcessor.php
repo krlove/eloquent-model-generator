@@ -12,32 +12,21 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class FieldProcessor implements ProcessorInterface
 {
-    /**
-     * @var DatabaseManager
-     */
-    protected $databaseManager;
+    protected DatabaseManager $databaseManager;
+    protected TypeRegistry $typeRegistry;
 
-    /**
-     * @var TypeRegistry
-     */
-    protected $typeRegistry;
-
-    /**
-     * @param DatabaseManager $databaseManager
-     * @param TypeRegistry $typeRegistry
-     */
     public function __construct(DatabaseManager $databaseManager, TypeRegistry $typeRegistry)
     {
         $this->databaseManager = $databaseManager;
         $this->typeRegistry = $typeRegistry;
     }
     
-    public function process(EloquentModel $model, Config $config)
+    public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix        = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
 
-        $tableDetails       = $schemaManager->listTableDetails($prefix . $model->getTableName());
+        $tableDetails = $schemaManager->listTableDetails($prefix . $model->getTableName());
         $primaryColumnNames = $tableDetails->getPrimaryKey() ? $tableDetails->getPrimaryKey()->getColumns() : [];
 
         $columnNames = [];
@@ -57,11 +46,9 @@ class FieldProcessor implements ProcessorInterface
             ->setValue($columnNames)
             ->setDocBlock(new DocBlockModel('@var array'));
         $model->addProperty($fillableProperty);
-
-        return $this;
     }
 
-    public function getPriority()
+    public function getPriority(): int
     {
         return 5;
     }
