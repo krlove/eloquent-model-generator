@@ -101,7 +101,7 @@ Unknown database type <ANY_TYPE> requested, Doctrine\DBAL\Platforms\MySqlPlatfor
 ```
 it means that you must register your type `<ANY_TYPE>` with Doctrine.
 
-For instance, you are going to register `enum` type and want Doctrine to treat it as `string` (You can find all existing Doctrine's types [here](http://doctrine-orm.readthedocs.io/projects/doctrine-dbal/en/latest/reference/types.html#mapping-matrix)). Add next lines at your `config/eloquent_model_generator.php`:
+For instance, you are going to register `enum` type and want Doctrine to treat it as `string` (You can find all existing Doctrine's types [here](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/types.html#mapping-matrix)). Add next lines at your `config/eloquent_model_generator.php`:
 ```
 return [
     // ...
