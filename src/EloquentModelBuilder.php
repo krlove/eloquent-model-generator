@@ -3,6 +3,7 @@
 namespace Krlove\EloquentModelGenerator;
 
 use IteratorAggregate;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
 

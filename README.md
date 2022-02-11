@@ -33,9 +33,9 @@ php artisan krlove:generate:model User --table-name=user
 In this case generated model will contain `protected $table = 'user'` property.
 
 ### output-path
-Generated file will be saved into `app` directory of your application and have `App` namespace by default. If you want to change the destination and namespace, supply the `output-path` and `namespace` options respectively:
+Generated file will be saved into `app/Models` directory of your application and have `App\Models` namespace by default. If you want to change the destination and namespace, supply the `output-path` and `namespace` options respectively:
 ```
-php artisan krlove:generate:model User --output-path=/full/path/to/output/directory --namespace=Some\\Other\\NSpace
+php artisan krlove:generate:model User --output-path=/full/path/to/output/directory --namespace=Your\\Custom\\Namespace
 ```
 `output-path` can be absolute path or relative to project's `app` directory. Absolute path must start with `/`:
 - `/var/www/html/app/Models` - absolute path
@@ -45,7 +45,7 @@ php artisan krlove:generate:model User --output-path=/full/path/to/output/direct
 ### base-class-name
 By default generated class will be extended from `Illuminate\Database\Eloquent\Model`. To change the base class specify `base-class-name` option:
 ```
-php artisan krlove:generate:model User --base-class-name=Some\\Other\\Base\\Model
+php artisan krlove:generate:model User --base-class-name=Custom\\Base\\Model
 ```
 
 ### backup
@@ -63,7 +63,7 @@ There are several useful options for defining several model's properties:
 
 ### Overriding default options globally
 
-Instead of spcifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
+Instead of specifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
 ```php
 <?php
 
@@ -93,7 +93,7 @@ return [
     ],
 ];
 ```
-### Registring custom database types
+### Registering custom database types
 If running a command leads to an error
 ```
 [Doctrine\DBAL\DBALException]

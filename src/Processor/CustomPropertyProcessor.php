@@ -4,14 +4,14 @@ namespace Krlove\EloquentModelGenerator\Processor;
 
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class CustomPropertyProcessor implements ProcessorInterface
 {
     public function process(EloquentModel $model, Config $config): void
     {
-        if ($config->get('no_timestamps') === true) {
+        if ($config->getNoTimestamps() !== null) {
             $pNoTimestamps = new PropertyModel('timestamps', 'public', false);
             $pNoTimestamps->setDocBlock(
                 new DocBlockModel('Indicates if the model should be timestamped.', '', '@var bool')
@@ -19,16 +19,16 @@ class CustomPropertyProcessor implements ProcessorInterface
             $model->addProperty($pNoTimestamps);
         }
 
-        if ($config->has('date_format')) {
-            $pDateFormat = new PropertyModel('dateFormat', 'protected', $config->get('date_format'));
+        if ($config->getDateFormat() !== null) {
+            $pDateFormat = new PropertyModel('dateFormat', 'protected', $config->getDateFormat());
             $pDateFormat->setDocBlock(
                 new DocBlockModel('The storage format of the model\'s date columns.', '', '@var string')
             );
             $model->addProperty($pDateFormat);
         }
 
-        if ($config->has('connection')) {
-            $pConnection = new PropertyModel('connection', 'protected', $config->get('connection'));
+        if ($config->getConnection()) {
+            $pConnection = new PropertyModel('connection', 'protected', $config->getConnection());
             $pConnection->setDocBlock(
                 new DocBlockModel('The connection name for the model.', '', '@var string')
             );

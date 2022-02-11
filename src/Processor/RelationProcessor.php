@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\MethodModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Model\BelongsTo;
@@ -28,8 +28,8 @@ class RelationProcessor implements ProcessorInterface
 
     public function process(EloquentModel $model, Config $config): void
     {
-        $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
+        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
         $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
         foreach ($foreignKeys as $tableForeignKey) {

@@ -4,7 +4,8 @@ namespace Krlove\EloquentModelGenerator\Command;
 
 use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
+use Krlove\EloquentModelGenerator\Config\ConfigBuilder;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
@@ -39,15 +40,13 @@ class GenerateModelCommand extends Command
         }
         foreach ($this->getOptions() as $option) {
             $value = $this->option($option[0]);
-            if ($option[2] == InputOption::VALUE_NONE && $value === false) {
-                $value = null;
+            if ($value === null || ($option[2] == InputOption::VALUE_NONE && $value === false)) {
+                continue;
             }
             $config[$option[0]] = $value;
         }
 
-        $config['db_types'] = $this->appConfig->get('eloquent_model_generator.db_types');
-
-        return new Config($config, $this->appConfig->get('eloquent_model_generator.model_defaults'));
+        return (new ConfigBuilder($config, $this->appConfig->get('eloquent_model_generator')))->build();
     }
 
     protected function saveModel(EloquentModel $model, Config $config): void
@@ -55,7 +54,7 @@ class GenerateModelCommand extends Command
         $content = $model->render();
 
         $outputPath = $this->resolveOutputPath($config);
-        if ($config->get('backup') && file_exists($outputPath)) {
+        if ($config->getBackup() === true && file_exists($outputPath)) {
             rename($outputPath, $outputPath . '~');
         }
         file_put_contents($outputPath, $content);
@@ -63,13 +62,11 @@ class GenerateModelCommand extends Command
 
     protected function resolveOutputPath(Config $config): string
     {
-        $path = $config->get('output_path');
-        if ($path === null || stripos($path, '/') !== 0) {
-            if (function_exists('app_path')) {
-                $path = app_path($path);
-            } else {
-                $path = app('path') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-            }
+        $path = $config->getOutputPath();
+        if ($path === null) {
+            $path = app()->path('Models');
+        } elseif (!str_starts_with($path, '/')) {
+            $path = app()->path($path);
         }
 
         if (!is_dir($path)) {
@@ -82,7 +79,7 @@ class GenerateModelCommand extends Command
             throw new GeneratorException(sprintf('%s is not writeable', $path));
         }
 
-        return $path . '/' . $config->get('class_name') . '.php';
+        return $path . '/' . $config->getClassName() . '.php';
     }
 
     protected function getArguments()

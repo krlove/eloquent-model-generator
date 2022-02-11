@@ -5,7 +5,7 @@ namespace Krlove\EloquentModelGenerator\Processor;
 use Illuminate\Database\DatabaseManager;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 
@@ -15,8 +15,8 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
 
     public function process(EloquentModel $model, Config $config): void
     {
-        $schemaManager = $this->databaseManager->connection($config->get('connection'))->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->get('connection'))->getTablePrefix();
+        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
+        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
         $tableDetails = $schemaManager->listTableDetails($prefix . $model->getTableName());
         $primaryKey = $tableDetails->getPrimaryKey();

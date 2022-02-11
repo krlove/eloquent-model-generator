@@ -6,7 +6,7 @@ use Krlove\CodeGenerator\Model\ClassNameModel;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
 use Krlove\CodeGenerator\Model\UseClassModel;
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
@@ -16,9 +16,9 @@ class TableNameProcessor implements ProcessorInterface
 
     public function process(EloquentModel $model, Config $config): void
     {
-        $className = $config->get('class_name');
-        $baseClassName = $config->get('base_class_name');
-        $tableName = $config->get('table_name');
+        $className = $config->getClassName();
+        $baseClassName = $config->getBaseClassName();
+        $tableName = $config->getTableName();
 
         $model
             ->setName(new ClassNameModel($className, $this->helper->getShortClassName($baseClassName)))

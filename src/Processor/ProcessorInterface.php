@@ -2,7 +2,7 @@
 
 namespace Krlove\EloquentModelGenerator\Processor;
 
-use Krlove\EloquentModelGenerator\Config;
+use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 interface ProcessorInterface
