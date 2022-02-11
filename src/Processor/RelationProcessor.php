@@ -24,7 +24,7 @@ use Krlove\EloquentModelGenerator\Model\Relation;
 
 class RelationProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager, private EmgHelper $helper) {}
+    public function __construct(private DatabaseManager $databaseManager) {}
 
     public function process(EloquentModel $model, Config $config): void
     {
@@ -159,7 +159,7 @@ class RelationProcessor implements ProcessorInterface
         ];
 
         if ($relation instanceof BelongsToMany) {
-            $defaultJoinTableName = $this->helper->getDefaultJoinTableName(
+            $defaultJoinTableName = EmgHelper::getDefaultJoinTableName(
                 $model->getTableName(),
                 $relation->getTableName()
             );
@@ -170,16 +170,16 @@ class RelationProcessor implements ProcessorInterface
 
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                $this->helper->getDefaultForeignColumnName($model->getTableName())
+                EmgHelper::getDefaultForeignColumnName($model->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
-                $this->helper->getDefaultForeignColumnName($relation->getTableName())
+                EmgHelper::getDefaultForeignColumnName($relation->getTableName())
             );
         } elseif ($relation instanceof HasMany) {
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                $this->helper->getDefaultForeignColumnName($model->getTableName())
+                EmgHelper::getDefaultForeignColumnName($model->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
@@ -188,7 +188,7 @@ class RelationProcessor implements ProcessorInterface
         } else {
             $arguments[] = $this->resolveArgument(
                 $relation->getForeignColumnName(),
-                $this->helper->getDefaultForeignColumnName($relation->getTableName())
+                EmgHelper::getDefaultForeignColumnName($relation->getTableName())
             );
             $arguments[] = $this->resolveArgument(
                 $relation->getLocalColumnName(),
