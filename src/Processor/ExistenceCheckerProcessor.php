@@ -9,12 +9,7 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class ExistenceCheckerProcessor implements ProcessorInterface
 {
-    protected DatabaseManager $databaseManager;
-
-    public function __construct(DatabaseManager $databaseManager)
-    {
-        $this->databaseManager = $databaseManager;
-    }
+    public function __construct(private DatabaseManager $databaseManager) {}
 
     public function process(EloquentModel $model, Config $config): void
     {

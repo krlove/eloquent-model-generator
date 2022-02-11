@@ -15,15 +15,9 @@ class GenerateModelCommand extends Command
 {
     protected $name = 'krlove:generate:model';
 
-    protected Generator $generator;
-    protected AppConfig $appConfig;
-
-    public function __construct(Generator $generator, AppConfig $appConfig)
+    public function __construct(private Generator $generator, private AppConfig $appConfig)
     {
         parent::__construct();
-
-        $this->generator = $generator;
-        $this->appConfig = $appConfig;
     }
 
     public function handle()

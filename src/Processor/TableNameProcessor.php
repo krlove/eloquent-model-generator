@@ -12,12 +12,7 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class TableNameProcessor implements ProcessorInterface
 {
-    protected EmgHelper $helper;
-
-    public function __construct(EmgHelper $helper)
-    {
-        $this->helper = $helper;
-    }
+    public function __construct(private EmgHelper $helper) {}
 
     public function process(EloquentModel $model, Config $config): void
     {

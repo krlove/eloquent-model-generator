@@ -28,12 +28,7 @@ class TypeRegistry
         'guid'         => 'string',
     ];
 
-    protected DatabaseManager $databaseManager;
-
-    public function __construct(DatabaseManager $databaseManager)
-    {
-        $this->databaseManager = $databaseManager;
-    }
+    public function __construct(private DatabaseManager $databaseManager) {}
 
     public function registerType(string $type, string $value, string $connection = null): void
     {

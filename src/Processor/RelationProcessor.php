@@ -24,14 +24,7 @@ use Krlove\EloquentModelGenerator\Model\Relation;
 
 class RelationProcessor implements ProcessorInterface
 {
-    protected DatabaseManager $databaseManager;
-    protected EmgHelper $helper;
-
-    public function __construct(DatabaseManager $databaseManager, EmgHelper $helper)
-    {
-        $this->databaseManager = $databaseManager;
-        $this->helper = $helper;
-    }
+    public function __construct(private DatabaseManager $databaseManager, private EmgHelper $helper) {}
 
     public function process(EloquentModel $model, Config $config): void
     {

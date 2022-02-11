@@ -6,14 +6,7 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class Generator
 {
-    protected EloquentModelBuilder $builder;
-    protected TypeRegistry $typeRegistry;
-
-    public function __construct(EloquentModelBuilder $builder, TypeRegistry $typeRegistry)
-    {
-        $this->builder = $builder;
-        $this->typeRegistry = $typeRegistry;
-    }
+    public function __construct(private EloquentModelBuilder $builder, private TypeRegistry $typeRegistry) {}
 
     public function generateModel(Config $config): EloquentModel
     {

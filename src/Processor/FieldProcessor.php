@@ -12,14 +12,7 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class FieldProcessor implements ProcessorInterface
 {
-    protected DatabaseManager $databaseManager;
-    protected TypeRegistry $typeRegistry;
-
-    public function __construct(DatabaseManager $databaseManager, TypeRegistry $typeRegistry)
-    {
-        $this->databaseManager = $databaseManager;
-        $this->typeRegistry = $typeRegistry;
-    }
+    public function __construct(private DatabaseManager $databaseManager, private TypeRegistry $typeRegistry) {}
     
     public function process(EloquentModel $model, Config $config): void
     {
