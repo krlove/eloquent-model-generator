@@ -26,7 +26,7 @@ class GenerateModelCommand extends Command
         $config = $this->createConfig();
 
         $model = $this->generator->generateModel($config);
-        $this->saveModel($model, $config);
+        $this->saveModel($model);
 
         $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
     }
@@ -49,20 +49,20 @@ class GenerateModelCommand extends Command
         return (new ConfigBuilder($config, $this->appConfig->get('eloquent_model_generator')))->build();
     }
 
-    protected function saveModel(EloquentModel $model, Config $config): void
+    protected function saveModel(EloquentModel $model): void
     {
         $content = $model->render();
 
-        $outputPath = $this->resolveOutputPath($config);
-        if ($config->getBackup() === true && file_exists($outputPath)) {
-            rename($outputPath, $outputPath . '~');
+        $outputFilepath = $this->resolveOutputPath() . '/' . $model->getName()->getName() . '.php';
+        if (!$this->option('no-backup') && file_exists($outputFilepath)) {
+            rename($outputFilepath, $outputFilepath . '~');
         }
-        file_put_contents($outputPath, $content);
+        file_put_contents($outputFilepath, $content);
     }
 
-    protected function resolveOutputPath(Config $config): string
+    protected function resolveOutputPath(): string
     {
-        $path = $config->getOutputPath();
+        $path = $this->option('output-path');
         if ($path === null) {
             $path = app()->path('Models');
         } elseif (!str_starts_with($path, '/')) {
@@ -79,7 +79,7 @@ class GenerateModelCommand extends Command
             throw new GeneratorException(sprintf('%s is not writeable', $path));
         }
 
-        return $path . '/' . $config->getClassName() . '.php';
+        return $path;
     }
 
     protected function getArguments()
@@ -99,7 +99,7 @@ class GenerateModelCommand extends Command
             ['no-timestamps', 'ts', InputOption::VALUE_NONE, 'Set timestamps property to false', null],
             ['date-format', 'df', InputOption::VALUE_OPTIONAL, 'dateFormat property', null],
             ['connection', 'cn', InputOption::VALUE_OPTIONAL, 'Connection property', null],
-            ['backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null]
+            ['no-backup', 'b', InputOption::VALUE_NONE, 'Backup existing model', null]
         ];
     }
 }

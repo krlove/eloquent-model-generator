@@ -10,11 +10,9 @@ class ConfigBuilder
     public const KEY_TABLE_NAME = 'table_name';
     public const KEY_NAMESPACE = 'namespace';
     public const KEY_BASE_CLASS_NAME = 'base_class_name';
-    public const KEY_OUTPUT_PATH = 'output_path';
     public const KEY_NO_TIMESTAMPS = 'no_timestamps';
     public const KEY_DATE_FORMAT = 'date_format';
     public const KEY_CONNECTION = 'connection';
-    public const KEY_BACKUP = 'backup';
     public const KEY_DB_TYPES = 'db_types';
 
     private const DEFAULTS = [
@@ -22,11 +20,9 @@ class ConfigBuilder
         self::KEY_TABLE_NAME => null,
         self::KEY_NAMESPACE => 'App\Models',
         self::KEY_BASE_CLASS_NAME => Model::class,
-        self::KEY_OUTPUT_PATH => null,
         self::KEY_NO_TIMESTAMPS => null,
         self::KEY_DATE_FORMAT => null,
         self::KEY_CONNECTION => null,
-        self::KEY_BACKUP => true,
         self::KEY_DB_TYPES => null,
     ];
 
@@ -48,11 +44,9 @@ class ConfigBuilder
             ->setTableName($merged[self::KEY_TABLE_NAME])
             ->setNamespace($merged[self::KEY_NAMESPACE])
             ->setBaseClassName($merged[self::KEY_BASE_CLASS_NAME])
-            ->setOutputPath($merged[self::KEY_OUTPUT_PATH])
             ->setNoTimestamps($merged[self::KEY_NO_TIMESTAMPS])
             ->setDateFormat($merged[self::KEY_DATE_FORMAT])
             ->setConnection($merged[self::KEY_CONNECTION])
-            ->setBackup($merged[self::KEY_BACKUP])
             ->setDbTypes($merged[self::KEY_DB_TYPES]);
     }
 

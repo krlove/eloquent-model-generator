@@ -8,11 +8,9 @@ class Config
     private ?string $tableName = null;
     private ?string $namespace = null;
     private ?string $baseClassName = null;
-    private ?string $outputPath = null;
     private ?bool $noTimestamps = null;
     private ?string $dateFormat = null;
     private ?string $connection = null;
-    private ?bool $backup = null;
     private ?array $dbTypes = null;
 
     public function getClassName(): ?string
@@ -63,18 +61,6 @@ class Config
         return $this;
     }
 
-    public function getOutputPath(): ?string
-    {
-        return $this->outputPath;
-    }
-
-    public function setOutputPath(?string $outputPath): self
-    {
-        $this->outputPath = $outputPath;
-
-        return $this;
-    }
-
     public function getNoTimestamps(): ?bool
     {
         return $this->noTimestamps;
@@ -107,18 +93,6 @@ class Config
     public function setConnection(?string $connection): self
     {
         $this->connection = $connection;
-
-        return $this;
-    }
-
-    public function getBackup(): ?bool
-    {
-        return $this->backup;
-    }
-
-    public function setBackup(?bool $backup): self
-    {
-        $this->backup = $backup;
 
         return $this;
     }
