@@ -8,6 +8,11 @@
             "Krlove\\EloquentModelGenerator\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Krlove\\Tests\\Integration\\": "tests/integration"
+        }
+    },
     "require": {
         "illuminate/database": "^9.0",
         "illuminate/support": "^9.0",
@@ -22,5 +27,8 @@
                 "Krlove\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }

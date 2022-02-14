@@ -52,7 +52,7 @@ class RelationProcessor implements ProcessorInterface
                 continue;
             }
 
-            $foreignKeys = $table->getForeignKeys();
+            $foreignKeys = $schemaManager->listTableForeignKeys($table->getName());
             foreach ($foreignKeys as $name => $foreignKey) {
                 if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
                     $localColumns = $foreignKey->getLocalColumns();
@@ -76,7 +76,7 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName = $this->removePrefix($prefix, $foreignKey->getLocalTableName());
+                        $tableName = $this->removePrefix($prefix, $table->getName());
                         $foreignColumn = $localColumns[0];
                         $localColumn = $foreignKey->getForeignColumns()[0];
 

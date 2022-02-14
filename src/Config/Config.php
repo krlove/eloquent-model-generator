@@ -4,16 +4,16 @@ namespace Krlove\EloquentModelGenerator\Config;
 
 class Config
 {
-    private ?string $className;
-    private ?string $tableName;
-    private ?string $namespace;
-    private ?string $baseClassName;
-    private ?string $outputPath;
-    private ?bool $noTimestamps;
-    private ?string $dateFormat;
-    private ?string $connection;
-    private ?bool $backup;
-    private ?array $dbTypes;
+    private ?string $className = null;
+    private ?string $tableName = null;
+    private ?string $namespace = null;
+    private ?string $baseClassName = null;
+    private ?string $outputPath = null;
+    private ?bool $noTimestamps = null;
+    private ?string $dateFormat = null;
+    private ?string $connection = null;
+    private ?bool $backup = null;
+    private ?array $dbTypes = null;
 
     public function getClassName(): ?string
     {
