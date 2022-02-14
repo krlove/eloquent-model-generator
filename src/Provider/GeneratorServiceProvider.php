@@ -12,6 +12,7 @@ use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
 use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
+use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->commands([
             GenerateModelCommand::class,
         ]);
+
+        $this->app->singleton(TypeRegistry::class);
 
         $this->app->tag([
             ExistenceCheckerProcessor::class,
