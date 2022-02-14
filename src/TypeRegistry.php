@@ -17,7 +17,7 @@ class TypeRegistry
         'date'         => 'string',
         'time'         => 'string',
         'decimal'      => 'float',
-        'integer'      => 'int',
+        'integer'      => 'integer',
         'object'       => 'object',
         'smallint'     => 'integer',
         'string'       => 'string',
@@ -26,6 +26,7 @@ class TypeRegistry
         'blob'         => 'string',
         'float'        => 'float',
         'guid'         => 'string',
+        'enum'         => 'string',
     ];
 
     public function __construct(private DatabaseManager $databaseManager) {}

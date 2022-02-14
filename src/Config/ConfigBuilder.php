@@ -27,9 +27,7 @@ class ConfigBuilder
         self::KEY_DATE_FORMAT => null,
         self::KEY_CONNECTION => null,
         self::KEY_BACKUP => true,
-        self::KEY_DB_TYPES => [
-            'enum' => 'string',
-        ],
+        self::KEY_DB_TYPES => null,
     ];
 
     private array $inputConfig;
