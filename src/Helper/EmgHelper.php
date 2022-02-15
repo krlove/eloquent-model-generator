@@ -15,9 +15,14 @@ class EmgHelper
         return end($pieces);
     }
 
-    public static function getDefaultTableName(string $className): string
+    public static function getTableNameByClassName(string $className): string
     {
         return Str::plural(Str::snake($className));
+    }
+
+    public static function getClassNameByTableName(string $tableName): string
+    {
+        return Str::singular(Str::studly($tableName));
     }
 
     public static function getDefaultForeignColumnName(string $table): string

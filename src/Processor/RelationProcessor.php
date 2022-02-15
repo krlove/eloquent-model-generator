@@ -15,6 +15,7 @@ use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
+use Krlove\EloquentModelGenerator\Helper\Prefix;
 use Krlove\EloquentModelGenerator\Model\BelongsTo;
 use Krlove\EloquentModelGenerator\Model\BelongsToMany;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
@@ -30,8 +31,9 @@ class RelationProcessor implements ProcessorInterface
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
-
-        $foreignKeys = $schemaManager->listTableForeignKeys($prefix . $model->getTableName());
+        
+        $prefixedTableName = Prefix::add($prefix, $model->getTableName());
+        $foreignKeys = $schemaManager->listTableForeignKeys($prefixedTableName);
         foreach ($foreignKeys as $tableForeignKey) {
             $tableForeignColumns = $tableForeignKey->getForeignColumns();
             if (count($tableForeignColumns) !== 1) {
@@ -39,7 +41,7 @@ class RelationProcessor implements ProcessorInterface
             }
 
             $relation = new BelongsTo(
-                $this->removePrefix($prefix, $tableForeignKey->getForeignTableName()),
+                Prefix::remove($prefix, $tableForeignKey->getForeignTableName()),
                 $tableForeignKey->getLocalColumns()[0],
                 $tableForeignColumns[0]
             );
@@ -48,13 +50,13 @@ class RelationProcessor implements ProcessorInterface
 
         $tables = $schemaManager->listTables();
         foreach ($tables as $table) {
-            if ($table->getName() === $prefix . $model->getTableName()) {
+            if ($table->getName() === $prefixedTableName) {
                 continue;
             }
 
             $foreignKeys = $schemaManager->listTableForeignKeys($table->getName());
             foreach ($foreignKeys as $name => $foreignKey) {
-                if ($foreignKey->getForeignTableName() === $prefix . $model->getTableName()) {
+                if ($foreignKey->getForeignTableName() === $prefixedTableName) {
                     $localColumns = $foreignKey->getLocalColumns();
                     if (count($localColumns) !== 1) {
                         continue;
@@ -64,11 +66,11 @@ class RelationProcessor implements ProcessorInterface
                         $keys = array_keys($foreignKeys);
                         $key = array_search($name, $keys) === 0 ? 1 : 0;
                         $secondForeignKey = $foreignKeys[$keys[$key]];
-                        $secondForeignTable = $this->removePrefix($prefix, $secondForeignKey->getForeignTableName());
+                        $secondForeignTable = Prefix::remove($prefix, $secondForeignKey->getForeignTableName());
 
                         $relation = new BelongsToMany(
                             $secondForeignTable,
-                            $this->removePrefix($prefix, $table->getName()),
+                            Prefix::remove($prefix, $table->getName()),
                             $localColumns[0],
                             $secondForeignKey->getLocalColumns()[0]
                         );
@@ -76,7 +78,7 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName = $this->removePrefix($prefix, $table->getName());
+                        $tableName = Prefix::remove($prefix, $table->getName());
                         $foreignColumn = $localColumns[0];
                         $localColumn = $foreignKey->getForeignColumns()[0];
 
@@ -116,7 +118,7 @@ class RelationProcessor implements ProcessorInterface
 
     protected function addRelation(EloquentModel $model, Relation $relation): void
     {
-        $relationClass = Str::singular(Str::studly($relation->getTableName()));
+        $relationClass = EmgHelper::getClassNameByTableName($relation->getTableName());
         if ($relation instanceof HasOne) {
             $name = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasOne::class);
@@ -155,7 +157,7 @@ class RelationProcessor implements ProcessorInterface
         $name = Str::camel($reflectionObject->getShortName());
 
         $arguments = [
-            $model->getNamespace()->getNamespace() . '\\' . Str::singular(Str::studly($relation->getTableName()))
+            $model->getNamespace()->getNamespace() . '\\' . EmgHelper::getClassNameByTableName($relation->getTableName())
         ];
 
         if ($relation instanceof BelongsToMany) {
@@ -226,12 +228,5 @@ class RelationProcessor implements ProcessorInterface
     protected function resolveArgument(string $actual, string $default): ?string
     {
         return $actual === $default ? null : $actual;
-    }
-
-    protected function removePrefix(string $prefix, string $tableName): string
-    {
-        $prefix = preg_quote($prefix, '/');
-
-        return preg_replace("/^$prefix/", '', $tableName);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\DatabaseManager;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
 use Krlove\EloquentModelGenerator\Config\Config;
+use Krlove\EloquentModelGenerator\Helper\Prefix;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 
@@ -18,7 +19,7 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
-        $tableDetails = $schemaManager->listTableDetails($prefix . $model->getTableName());
+        $tableDetails = $schemaManager->listTableDetails(Prefix::add($prefix, $model->getTableName()));
         $primaryKey = $tableDetails->getPrimaryKey();
         if ($primaryKey === null) {
             return;

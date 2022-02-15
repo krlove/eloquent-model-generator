@@ -6,6 +6,7 @@ use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
+use Krlove\EloquentModelGenerator\Command\GenerateModelsCommand;
 use Krlove\EloquentModelGenerator\EventListener\GenerateCommandEventListener;
 use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
@@ -25,6 +26,7 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         $this->commands([
             GenerateModelCommand::class,
+            GenerateModelsCommand::class,
         ]);
 
         $this->app->singleton(TypeRegistry::class);

@@ -11,7 +11,7 @@ class CustomPropertyProcessor implements ProcessorInterface
 {
     public function process(EloquentModel $model, Config $config): void
     {
-        if ($config->getNoTimestamps() !== null) {
+        if ($config->getNoTimestamps()) {
             $pNoTimestamps = new PropertyModel('timestamps', 'public', false);
             $pNoTimestamps->setDocBlock(
                 new DocBlockModel('Indicates if the model should be timestamped.', '', '@var bool')

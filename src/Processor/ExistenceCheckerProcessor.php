@@ -5,6 +5,7 @@ namespace Krlove\EloquentModelGenerator\Processor;
 use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
+use Krlove\EloquentModelGenerator\Helper\Prefix;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class ExistenceCheckerProcessor implements ProcessorInterface
@@ -16,8 +17,9 @@ class ExistenceCheckerProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
         $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
-        if (!$schemaManager->tablesExist($prefix . $model->getTableName())) {
-            throw new GeneratorException(sprintf('Table %s does not exist', $prefix . $model->getTableName()));
+        $tableName = Prefix::add($prefix, $model->getTableName());
+        if (!$schemaManager->tablesExist($tableName)) {
+            throw new GeneratorException(sprintf('Table %s does not exist', $tableName));
         }
     }
 

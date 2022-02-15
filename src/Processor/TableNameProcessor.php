@@ -23,9 +23,9 @@ class TableNameProcessor implements ProcessorInterface
         $model
             ->setName(new ClassNameModel($className, $this->helper->getShortClassName($baseClassName)))
             ->addUses(new UseClassModel(ltrim($baseClassName, '\\')))
-            ->setTableName($tableName ?: $this->helper->getDefaultTableName($className));
+            ->setTableName($tableName ?: $this->helper->getTableNameByClassName($className));
 
-        if ($model->getTableName() !== $this->helper->getDefaultTableName($className)) {
+        if ($model->getTableName() !== $this->helper->getTableNameByClassName($className)) {
             $property = new PropertyModel('table', 'protected', $model->getTableName());
             $property->setDocBlock(new DocBlockModel('The table associated with the model.', '', '@var string'));
             $model->addProperty($property);
