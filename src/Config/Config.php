@@ -11,7 +11,6 @@ class Config
     private ?bool $noTimestamps = null;
     private ?string $dateFormat = null;
     private ?string $connection = null;
-    private ?array $dbTypes = null;
 
     public function getClassName(): ?string
     {
@@ -93,18 +92,6 @@ class Config
     public function setConnection(?string $connection): self
     {
         $this->connection = $connection;
-
-        return $this;
-    }
-
-    public function getDbTypes(): ?array
-    {
-        return $this->dbTypes;
-    }
-
-    public function setDbTypes(?array $dbTypes): self
-    {
-        $this->dbTypes = $dbTypes;
 
         return $this;
     }

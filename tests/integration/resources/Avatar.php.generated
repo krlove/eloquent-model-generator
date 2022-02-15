@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
+ * @property integer $id
  * @property string $path
- * @property int $user_id
+ * @property integer $user_id
  * @property User $user
  */
 class Avatar extends Model

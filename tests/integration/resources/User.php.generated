@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
+ * @property integer $id
  * @property string $username
- * @property int $is_active
- * @property int $organization_id
+ * @property integer $is_active
+ * @property integer $organization_id
  * @property Organization $organization
  * @property Avatar $avatar
  * @property Post[] $posts

@@ -2,9 +2,12 @@
 
 namespace Krlove\EloquentModelGenerator\Provider;
 
+use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Krlove\EloquentModelGenerator\Command\GenerateModelCommand;
-use Krlove\EloquentModelGenerator\EloquentModelBuilder;
+use Krlove\EloquentModelGenerator\EventListener\GenerateCommandEventListener;
+use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
 use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
 use Krlove\EloquentModelGenerator\Processor\ExistenceCheckerProcessor;
@@ -25,6 +28,7 @@ class GeneratorServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton(TypeRegistry::class);
+        $this->app->singleton(GenerateCommandEventListener::class);
 
         $this->app->tag([
             ExistenceCheckerProcessor::class,
@@ -36,8 +40,13 @@ class GeneratorServiceProvider extends ServiceProvider
             CustomPrimaryKeyProcessor::class,
         ], self::PROCESSOR_TAG);
 
-        $this->app->bind(EloquentModelBuilder::class, function ($app) {
-            return new EloquentModelBuilder($app->tagged(self::PROCESSOR_TAG));
+        $this->app->bind(Generator::class, function ($app) {
+            return new Generator($app->tagged(self::PROCESSOR_TAG));
         });
+    }
+
+    public function boot()
+    {
+        Event::listen(CommandStarting::class, [GenerateCommandEventListener::class, 'handle']);
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\SQLiteConnection;
 use Krlove\EloquentModelGenerator\Config\Config;
-use Krlove\EloquentModelGenerator\EloquentModelBuilder;
 use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
@@ -49,7 +48,7 @@ class GeneratorTest extends TestCase
 
         $typeRegistry = new TypeRegistry($databaseManagerMock);
 
-        $eloquentModelBuilder = new EloquentModelBuilder([
+        $this->generator = new Generator([
             new CustomPrimaryKeyProcessor($databaseManagerMock, $typeRegistry),
             new CustomPropertyProcessor(),
             new ExistenceCheckerProcessor($databaseManagerMock),
@@ -58,8 +57,6 @@ class GeneratorTest extends TestCase
             new RelationProcessor($databaseManagerMock),
             new TableNameProcessor(new EmgHelper()),
         ]);
-
-        $this->generator = new Generator($eloquentModelBuilder, $typeRegistry);
     }
 
     /**

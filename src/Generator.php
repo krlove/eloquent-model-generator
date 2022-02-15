@@ -2,29 +2,51 @@
 
 namespace Krlove\EloquentModelGenerator;
 
+use IteratorAggregate;
 use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Model\EloquentModel;
+use Krlove\EloquentModelGenerator\Processor\ProcessorInterface;
 
 class Generator
 {
-    public function __construct(private EloquentModelBuilder $builder, private TypeRegistry $typeRegistry) {}
+    /**
+     * @var ProcessorInterface[]
+     */
+    protected array $processors;
+
+    /**
+     * @param ProcessorInterface[]|IteratorAggregate $processors
+     */
+    public function __construct(iterable $processors)
+    {
+        if ($processors instanceof IteratorAggregate) {
+            $this->processors = iterator_to_array($processors);
+        } else {
+            $this->processors = $processors;
+        }
+    }
 
     public function generateModel(Config $config): EloquentModel
     {
-        $this->registerUserTypes($config);
+        $model = new EloquentModel();
 
-        return $this->builder->createModel($config);
+        $this->sortProcessorsByPriority();
+
+        foreach ($this->processors as $processor) {
+            $processor->process($model, $config);
+        }
+
+        return $model;
     }
 
-    protected function registerUserTypes(Config $config): void
+    protected function sortProcessorsByPriority(): void
     {
-        $userTypes = $config->getDbTypes();
-        if ($userTypes && is_array($userTypes)) {
-            $connection = $config->getConnection();
-
-            foreach ($userTypes as $type => $value) {
-                $this->typeRegistry->registerType($type, $value, $connection);
+        usort($this->processors, function (ProcessorInterface $one, ProcessorInterface $two) {
+            if ($one->getPriority() == $two->getPriority()) {
+                return 0;
             }
-        }
+
+            return $one->getPriority() < $two->getPriority() ? 1 : -1;
+        });
     }
 }

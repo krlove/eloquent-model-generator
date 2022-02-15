@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
+ * @property integer $id
  * @property string $title
  * @property string $content
- * @property int $author_id
+ * @property integer $author_id
  * @property User $user
  */
 class Post extends Model
