@@ -15,9 +15,8 @@ class ExistenceCheckerProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
-        $tableName = Prefix::add($prefix, $model->getTableName());
+        $tableName = Prefix::add($model->getTableName());
         if (!$schemaManager->tablesExist($tableName)) {
             throw new GeneratorException(sprintf('Table %s does not exist', $tableName));
         }

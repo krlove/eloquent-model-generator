@@ -17,9 +17,8 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
-        $tableDetails = $schemaManager->listTableDetails(Prefix::add($prefix, $model->getTableName()));
+        $tableDetails = $schemaManager->listTableDetails(Prefix::add($model->getTableName()));
         $primaryKey = $tableDetails->getPrimaryKey();
         if ($primaryKey === null) {
             return;

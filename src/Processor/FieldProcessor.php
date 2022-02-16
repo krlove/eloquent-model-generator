@@ -18,9 +18,8 @@ class FieldProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
 
-        $tableDetails = $schemaManager->listTableDetails(Prefix::add($prefix, $model->getTableName()));
+        $tableDetails = $schemaManager->listTableDetails(Prefix::add($model->getTableName()));
         $primaryColumnNames = $tableDetails->getPrimaryKey() ? $tableDetails->getPrimaryKey()->getColumns() : [];
 
         $columnNames = [];

@@ -19,9 +19,8 @@ class RelationProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
         
-        $prefixedTableName = Prefix::add($prefix, $model->getTableName());
+        $prefixedTableName = Prefix::add($model->getTableName());
         $foreignKeys = $schemaManager->listTableForeignKeys($prefixedTableName);
         foreach ($foreignKeys as $tableForeignKey) {
             $tableForeignColumns = $tableForeignKey->getForeignColumns();
@@ -30,7 +29,7 @@ class RelationProcessor implements ProcessorInterface
             }
 
             $relation = new BelongsTo(
-                Prefix::remove($prefix, $tableForeignKey->getForeignTableName()),
+                Prefix::remove($tableForeignKey->getForeignTableName()),
                 $tableForeignKey->getLocalColumns()[0],
                 $tableForeignColumns[0]
             );
@@ -55,11 +54,11 @@ class RelationProcessor implements ProcessorInterface
                         $keys = array_keys($foreignKeys);
                         $key = array_search($name, $keys) === 0 ? 1 : 0;
                         $secondForeignKey = $foreignKeys[$keys[$key]];
-                        $secondForeignTable = Prefix::remove($prefix, $secondForeignKey->getForeignTableName());
+                        $secondForeignTable = Prefix::remove($secondForeignKey->getForeignTableName());
 
                         $relation = new BelongsToMany(
                             $secondForeignTable,
-                            Prefix::remove($prefix, $table->getName()),
+                            Prefix::remove($table->getName()),
                             $localColumns[0],
                             $secondForeignKey->getLocalColumns()[0]
                         );
@@ -67,7 +66,7 @@ class RelationProcessor implements ProcessorInterface
 
                         break;
                     } else {
-                        $tableName = Prefix::remove($prefix, $table->getName());
+                        $tableName = Prefix::remove($table->getName());
                         $foreignColumn = $localColumns[0];
                         $localColumn = $foreignKey->getForeignColumns()[0];
 

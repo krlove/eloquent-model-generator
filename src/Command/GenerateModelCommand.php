@@ -2,9 +2,10 @@
 
 namespace Krlove\EloquentModelGenerator\Command;
 
-use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
+use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Generator;
+use Krlove\EloquentModelGenerator\Helper\Prefix;
 use Symfony\Component\Console\Input\InputArgument;
 
 class GenerateModelCommand extends Command
@@ -13,7 +14,7 @@ class GenerateModelCommand extends Command
 
     protected $name = 'krlove:generate:model';
 
-    public function __construct(private Generator $generator, private AppConfig $appConfig)
+    public function __construct(private Generator $generator, private DatabaseManager $databaseManager)
     {
         parent::__construct();
     }
@@ -22,6 +23,7 @@ class GenerateModelCommand extends Command
     {
         $config = $this->createConfig();
         $config->setClassName($this->argument('class-name'));
+        Prefix::setPrefix($this->databaseManager->connection($config->getConnection())->getTablePrefix());
 
         $model = $this->generator->generateModel($config);
         $this->saveModel($model);

@@ -4,14 +4,21 @@ namespace Krlove\EloquentModelGenerator\Helper;
 
 class Prefix
 {
-    public static function add(?string $prefix, string $tableName): string
+    private static ?string $prefix = null;
+
+    public static function setPrefix(?string $prefix): void
     {
-        return $prefix . $tableName;
+        self::$prefix = (string) $prefix;
     }
 
-    public static function remove(?string $prefix, string $tableName): string
+    public static function add(string $tableName): string
     {
-        $prefix = preg_quote($prefix, '/');
+        return self::$prefix . $tableName;
+    }
+
+    public static function remove(string $tableName): string
+    {
+        $prefix = preg_quote(self::$prefix, '/');
 
         return preg_replace("/^$prefix/", '', $tableName);
     }

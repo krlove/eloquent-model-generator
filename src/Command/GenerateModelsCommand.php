@@ -16,24 +16,21 @@ class GenerateModelsCommand extends Command
 
     protected $name = 'krlove:generate:models';
 
-    public function __construct(
-        private Generator $generator,
-        private AppConfig $appConfig,
-        private DatabaseManager $databaseManager
-    ) {
+    public function __construct(private Generator $generator, private DatabaseManager $databaseManager)
+    {
         parent::__construct();
     }
 
     public function handle()
     {
         $config = $this->createConfig();
+        Prefix::setPrefix($this->databaseManager->connection($config->getConnection())->getTablePrefix());
 
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $prefix = $this->databaseManager->connection($config->getConnection())->getTablePrefix();
         $tables = $schemaManager->listTables();
         $skipTables = $this->option('skip-table');
         foreach ($tables as $table) {
-            $tableName = Prefix::remove($prefix, $table->getName());
+            $tableName = Prefix::remove($table->getName());
             if (in_array($tableName, $skipTables)) {
                 continue;
             }
