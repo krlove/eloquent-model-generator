@@ -1,0 +1,69 @@
+<?php
+
+namespace App;
+
+use Base\ClassName;
+
+/**
+ * @property integer $id
+ * @property string $username
+ * @property integer $is_active
+ * @property integer $organization_id
+ * @property Organization $organization
+ * @property Avatar $avatar
+ * @property Post[] $posts
+ * @property Role[] $roles
+ */
+class User extends ClassName
+{
+    /**
+     * Indicates if the model should be timestamped.
+     * 
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * The storage format of the model's date columns.
+     * 
+     * @var string
+     */
+    protected $dateFormat = 'd/m/y';
+
+    /**
+     * @var array
+     */
+    protected $fillable = ['username', 'is_active', 'organization_id'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function organization()
+    {
+        return $this->belongsTo('App\Organization');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function avatar()
+    {
+        return $this->hasOne('App\Avatar', 'user_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function posts()
+    {
+        return $this->hasMany('App\Post', 'author_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany('App\Role', 'user_roles');
+    }
+}

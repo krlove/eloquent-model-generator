@@ -62,7 +62,7 @@ class GeneratorTest extends TestCase
     /**
      * @dataProvider modelNameProvider
      */
-    public function testGeneratedUserModel(string $modelName): void
+    public function testGeneratedModel(string $modelName): void
     {
         $config = (new Config())
             ->setClassName($modelName)
@@ -92,5 +92,18 @@ class GeneratorTest extends TestCase
                 'modelName' => 'Post',
             ],
         ];
+    }
+
+    public function testGeneratedModelWithCustomProperties(): void
+    {
+        $config = (new Config())
+            ->setClassName('User')
+            ->setNamespace('App')
+            ->setBaseClassName('Base\ClassName')
+            ->setNoTimestamps(true)
+            ->setDateFormat('d/m/y');
+
+        $model = $this->generator->generateModel($config);
+        $this->assertEquals(file_get_contents(__DIR__ . '/resources/User-with-params.php.generated'), $model->render());
     }
 }
