@@ -2,9 +2,9 @@
 
 namespace Krlove\EloquentModelGenerator\Processor;
 
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Config\Config;
+use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Helper\Prefix;
 use Krlove\EloquentModelGenerator\Model\BelongsTo;
 use Krlove\EloquentModelGenerator\Model\BelongsToMany;
@@ -19,7 +19,7 @@ class RelationProcessor implements ProcessorInterface
     public function process(EloquentModel $model, Config $config): void
     {
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        
+
         $prefixedTableName = Prefix::add($model->getTableName());
         $foreignKeys = $schemaManager->listTableForeignKeys($prefixedTableName);
         foreach ($foreignKeys as $tableForeignKey) {
@@ -70,7 +70,7 @@ class RelationProcessor implements ProcessorInterface
                         $foreignColumn = $localColumns[0];
                         $localColumn = $foreignKey->getForeignColumns()[0];
 
-                        if ($this->isColumnUnique($table, $foreignColumn)) {
+                        if (EmgHelper::isColumnUnique($table, $foreignColumn)) {
                             $relation = new HasOne($tableName, $foreignColumn, $localColumn);
                         } else {
                             $relation = new HasMany($tableName, $foreignColumn, $localColumn);
@@ -86,21 +86,5 @@ class RelationProcessor implements ProcessorInterface
     public function getPriority(): int
     {
         return 5;
-    }
-
-    protected function isColumnUnique(Table $table, string $column): bool
-    {
-        foreach ($table->getIndexes() as $index) {
-            $indexColumns = $index->getColumns();
-            if (count($indexColumns) !== 1) {
-                continue;
-            }
-            $indexColumn = $indexColumns[0];
-            if ($indexColumn === $column && $index->isUnique()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
