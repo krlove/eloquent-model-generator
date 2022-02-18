@@ -9,9 +9,9 @@ class EmgHelper
 {
     public const DEFAULT_PRIMARY_KEY = 'id';
 
-    public static function getShortClassName(string $fullClassName): string
+    public static function getShortClassName(string $fqcn): string
     {
-        $pieces = explode('\\', $fullClassName);
+        $pieces = explode('\\', $fqcn);
 
         return end($pieces);
     }
@@ -26,14 +26,14 @@ class EmgHelper
         return Str::singular(Str::studly($tableName));
     }
 
-    public static function getDefaultForeignColumnName(string $table): string
+    public static function getDefaultForeignColumnName(string $tableName): string
     {
-        return sprintf('%s_%s', Str::singular($table), self::DEFAULT_PRIMARY_KEY);
+        return sprintf('%s_%s', Str::singular($tableName), self::DEFAULT_PRIMARY_KEY);
     }
 
-    public static function getDefaultJoinTableName(string $tableOne, string $tableTwo): string
+    public static function getDefaultJoinTableName(string $tableNameOne, string $tableNameTwo): string
     {
-        $tables = [Str::singular($tableOne), Str::singular($tableTwo)];
+        $tables = [Str::singular($tableNameOne), Str::singular($tableNameTwo)];
         sort($tables);
 
         return implode('_', $tables);
