@@ -9,10 +9,10 @@ use Base\ClassName;
  * @property string $username
  * @property integer $is_active
  * @property integer $organization_id
- * @property Organization $organization
  * @property Avatar $avatar
  * @property Post[] $posts
  * @property Role[] $roles
+ * @property Organization $organization
  */
 class User extends ClassName
 {
@@ -36,14 +36,6 @@ class User extends ClassName
     protected $fillable = ['username', 'is_active', 'organization_id'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function organization()
-    {
-        return $this->belongsTo('App\Organization');
-    }
-
-    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function avatar()
@@ -65,5 +57,13 @@ class User extends ClassName
     public function roles()
     {
         return $this->belongsToMany('App\Role', 'user_roles');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function organization()
+    {
+        return $this->belongsTo('App\Organization');
     }
 }

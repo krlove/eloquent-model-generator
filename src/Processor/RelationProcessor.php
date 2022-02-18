@@ -21,35 +21,23 @@ class RelationProcessor implements ProcessorInterface
         $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
 
         $prefixedTableName = Prefix::add($model->getTableName());
-        $foreignKeys = $schemaManager->listTableForeignKeys($prefixedTableName);
-        foreach ($foreignKeys as $tableForeignKey) {
-            $tableForeignColumns = $tableForeignKey->getForeignColumns();
-            if (count($tableForeignColumns) !== 1) {
-                continue;
-            }
-
-            $relation = new BelongsTo(
-                Prefix::remove($tableForeignKey->getForeignTableName()),
-                $tableForeignKey->getLocalColumns()[0],
-                $tableForeignColumns[0]
-            );
-            $model->addRelation($relation);
-        }
-
         $tables = $schemaManager->listTables();
         foreach ($tables as $table) {
-            if ($table->getName() === $prefixedTableName) {
-                continue;
-            }
-
             $foreignKeys = $schemaManager->listTableForeignKeys($table->getName());
             foreach ($foreignKeys as $name => $foreignKey) {
-                if ($foreignKey->getForeignTableName() === $prefixedTableName) {
-                    $localColumns = $foreignKey->getLocalColumns();
-                    if (count($localColumns) !== 1) {
-                        continue;
-                    }
+                $localColumns = $foreignKey->getLocalColumns();
+                if (count($localColumns) !== 1) {
+                    continue;
+                }
 
+                if ($table->getName() === $prefixedTableName) {
+                    $relation = new BelongsTo(
+                        Prefix::remove($foreignKey->getForeignTableName()),
+                        $foreignKey->getLocalColumns()[0],
+                        $foreignKey->getForeignColumns()[0]
+                    );
+                    $model->addRelation($relation);
+                } elseif ($foreignKey->getForeignTableName() === $prefixedTableName) {
                     if (count($foreignKeys) === 2 && count($table->getColumns()) === 2) {
                         $keys = array_keys($foreignKeys);
                         $key = array_search($name, $keys) === 0 ? 1 : 0;

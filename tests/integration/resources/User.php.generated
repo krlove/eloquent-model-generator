@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $username
  * @property integer $is_active
  * @property integer $organization_id
- * @property Organization $organization
  * @property Avatar $avatar
  * @property Post[] $posts
  * @property Role[] $roles
+ * @property Organization $organization
  */
 class User extends Model
 {
@@ -20,14 +20,6 @@ class User extends Model
      * @var array
      */
     protected $fillable = ['username', 'is_active', 'organization_id'];
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function organization()
-    {
-        return $this->belongsTo('App\Models\Organization');
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -51,5 +43,13 @@ class User extends Model
     public function roles()
     {
         return $this->belongsToMany('App\Models\Role', 'user_roles');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function organization()
+    {
+        return $this->belongsTo('App\Models\Organization');
     }
 }
