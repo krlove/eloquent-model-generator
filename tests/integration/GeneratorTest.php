@@ -11,7 +11,6 @@ use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
 use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
-use Krlove\EloquentModelGenerator\Processor\ExistenceCheckerProcessor;
 use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
 use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
@@ -51,11 +50,10 @@ class GeneratorTest extends TestCase
         $this->generator = new Generator([
             new CustomPrimaryKeyProcessor($databaseManagerMock, $typeRegistry),
             new CustomPropertyProcessor(),
-            new ExistenceCheckerProcessor($databaseManagerMock),
             new FieldProcessor($databaseManagerMock, $typeRegistry),
             new NamespaceProcessor(),
             new RelationProcessor($databaseManagerMock),
-            new TableNameProcessor(new EmgHelper()),
+            new TableNameProcessor($databaseManagerMock),
         ]);
     }
 

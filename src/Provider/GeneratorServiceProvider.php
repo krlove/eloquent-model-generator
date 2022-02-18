@@ -11,7 +11,6 @@ use Krlove\EloquentModelGenerator\EventListener\GenerateCommandEventListener;
 use Krlove\EloquentModelGenerator\Generator;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
 use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
-use Krlove\EloquentModelGenerator\Processor\ExistenceCheckerProcessor;
 use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
 use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
@@ -33,7 +32,6 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->app->singleton(GenerateCommandEventListener::class);
 
         $this->app->tag([
-            ExistenceCheckerProcessor::class,
             FieldProcessor::class,
             NamespaceProcessor::class,
             RelationProcessor::class,
