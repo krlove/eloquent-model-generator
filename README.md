@@ -1,6 +1,6 @@
 # Eloquent Model Generator
 
-Eloquent Model Generator is a tool based on [Code Generator](https://github.com/krlove/code-generator) for generating Eloquent models.
+Eloquent Model Generator generates Eloquent models using database schema as a source.
 
 ## Installation
 Step 1. Add Eloquent Model Generator to your project:
@@ -14,7 +14,6 @@ Step 2. Register `GeneratorServiceProvider`:
     Krlove\EloquentModelGenerator\Provider\GeneratorServiceProvider::class,
 ];
 ```
-If you are using Laravel version 5.5 or higher this step can be omitted since this project supports [Package Discovery](https://laravel.com/docs/5.5/packages#package-discovery) feature.
 
 Step 3. Configure your database connection.
 
@@ -23,7 +22,7 @@ Use
 ```
 php artisan krlove:generate:model User
 ```
-to generate a model class. Generator will look for table with name `users` and generate a model for it.
+to generate a model class. Generator will look for table named `users` and generate a model for it.
 
 ### table-name
 Use `table-name` option to specify another table name:
@@ -35,25 +34,23 @@ In this case generated model will contain `protected $table = 'user'` property.
 ### output-path
 Generated file will be saved into `app/Models` directory of your application and have `App\Models` namespace by default. If you want to change the destination and namespace, supply the `output-path` and `namespace` options respectively:
 ```
-php artisan krlove:generate:model User --output-path=/full/path/to/output/directory --namespace=Your\\Custom\\Namespace
+php artisan krlove:generate:model User --output-path=/full/path/to/output/directory --namespace=Your\\Custom\\Models\\Place
 ```
 `output-path` can be absolute path or relative to project's `app` directory. Absolute path must start with `/`:
 - `/var/www/html/app/Models` - absolute path
-- `Models` - relative path, will be transformed to `/var/www/html/app/Models` (assuming your project app directory is `/var/www/html/app`)
-
+- `Custom/Models` - relative path, will be transformed to `/var/www/html/app/Custom/Models` (assuming your project app directory is `/var/www/html/app`)
 
 ### base-class-name
-By default generated class will be extended from `Illuminate\Database\Eloquent\Model`. To change the base class specify `base-class-name` option:
+By default, generated class will be extended from `Illuminate\Database\Eloquent\Model`. To change the base class specify `base-class-name` option:
 ```
 php artisan krlove:generate:model User --base-class-name=Custom\\Base\\Model
 ```
 
-### backup
-Save existing model before generating a new one
+### no-backup
+If `User.php` file already exist, it will be renamed into `User.php~` first and saved at the same directory. Unless `no-backup` option is specified:
 ```
-php artisan krlove:generate:model User --backup
+php artisan krlove:generate:model User --no-backup
 ```
-If `User.php` file already exist, it will be renamed into `User.php~` first and saved at the same directory. After than a new `User.php` will be generated.
 
 ### Other options
 There are several useful options for defining several model's properties:
@@ -61,71 +58,57 @@ There are several useful options for defining several model's properties:
 - `date-format` - specifies `dateFormat` property of the model
 - `connection` - specifies connection name property of the model
 
-### Overriding default options globally
+### Overriding default options
 
-Instead of specifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values. Generator already contains its own config file at `Resources/config.php` with following options:
+Instead of specifying options each time when executing the command you can create a config file named `eloquent_model_generator.php` at project's `config` directory with your own default values:
 ```php
 <?php
 
 return [
-    'namespace'       => 'App',
+    'namespace' => 'App',
     'base_class_name' => \Illuminate\Database\Eloquent\Model::class,
-    'output_path'     => null,
-    'no_timestamps'   => null,
-    'date_format'     => null,
-    'connection'      => null,
-    'backup'          => null,
+    'output_path' => null,
+    'no_timestamps' => null,
+    'date_format' => null,
+    'connection' => null,
+    'no_backup' => null,
+    'db_types' => null,
 ];
 ```
-You can override them by defining `model_defaults` array at `eloquent_model_generator.php`:
-```php
-<?php
 
-return [
-    'model_defaults' => [
-        'namespace'       => 'Some\\Other\\Namespace',
-        'base_class_name' => 'Some\\Other\\ClassName',
-        'output_path'     => '/full/path/to/output/directory',
-        'no_timestamps'   => true,
-        'date_format'     => 'U',
-        'connection'      => 'other-connection',
-        'backup'          => true,
-    ],
-];
-```
 ### Registering custom database types
 If running a command leads to an error
 ```
 [Doctrine\DBAL\DBALException]
-Unknown database type <ANY_TYPE> requested, Doctrine\DBAL\Platforms\MySqlPlatform may not support it.
+Unknown database type <TYPE> requested, Doctrine\DBAL\Platforms\MySqlPlatform may not support it.
 ```
-it means that you must register your type `<ANY_TYPE>` with Doctrine.
+it means that you must register your type `<TYPE>` at your `config/eloquent_model_generator.php`:
 
-For instance, you are going to register `enum` type and want Doctrine to treat it as `string` (You can find all existing Doctrine's types [here](https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/types.html#mapping-matrix)). Add next lines at your `config/eloquent_model_generator.php`:
 ```
 return [
     // ...
     'db_types' => [
-        'enum' => 'string',
+        '<TYPE>' => 'string',
     ],
 ];
 ```
+
 ### Usage example
 Table `user`:
 ```mysql
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `role_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
 Command:
 ```
-php artisan krlove:generate:model User  --table-name=user
+php artisan krlove:generate:model User
 ```
 Result:
 ```php
@@ -146,13 +129,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'user';
-
     /**
      * @var array
      */
@@ -183,3 +159,13 @@ class User extends Model
     }
 }
 ```
+
+## Generating models for all tables
+Command `krlove:generate:models` will generate models for all tables in the database. It accepts all options available for `krlove:generate:model` along with `skip-table` option.
+
+### skip-table
+Specify one or multiple table names to skip:
+```php
+php artisan krlove:generate:models --skip-table=users --skip-table=roles
+```
+Note that table names must be specified without prefix if you have one configured.

@@ -21,13 +21,6 @@
         "doctrine/dbal": "^3.0",
         "krlove/code-generator": "^1.0"
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Krlove\\EloquentModelGenerator\\Provider\\GeneratorServiceProvider"
-            ]
-        }
-    },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
     }
