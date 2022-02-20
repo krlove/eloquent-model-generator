@@ -19,7 +19,7 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
-    const PROCESSOR_TAG = 'eloquent_model_generator.processor';
+    public const PROCESSOR_TAG = 'eloquent_model_generator.processor';
 
     public function register()
     {

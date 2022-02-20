@@ -172,3 +172,43 @@ Specify one or multiple table names to skip:
 php artisan krlove:generate:models --skip-table=users --skip-table=roles
 ```
 Note that table names must be specified without prefix if you have one configured.
+
+## Customisation
+You can hook into the process of model generation by adding your own instances of `Krlove\EloquentModelGenerator\Processor\ProcessorInterface` and tagging it with `GeneratorServiceProvider::PROCESSOR_TAG`.
+
+Imagine you want to override Eloquent's `perPage` property value.
+```php
+class PerPageProcessor implements ProcessorInterface
+{
+    public function process(EloquentModel $model, Config $config): void
+    {
+        $propertyModel = new PropertyModel('perPage', 'protected', 20);
+        $dockBlockModel = new DocBlockModel('The number of models to return for pagination.', '', '@var int');
+        $propertyModel->setDocBlock($dockBlockModel);
+        $model->addProperty($propertyModel);
+    }
+
+    public function getPriority(): int
+    {
+        return 8;
+    }
+}
+```
+`getPriority` determines the order of when the processor is called relative to other processors.
+
+In your service provider:
+```php
+public function register()
+{
+    $this->app->tag([InflectorRulesProcessor::class], [GeneratorServiceProvider::PROCESSOR_TAG]);
+}
+```
+After that, generated models will contain the following code:
+```php
+/**
+ * The number of models to return for pagination.
+ * 
+ * @var int
+ */
+protected $perPage = 20;
+```
