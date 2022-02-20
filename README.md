@@ -2,6 +2,9 @@
 
 Eloquent Model Generator generates Eloquent models using database schema as a source.
 
+## Version 2.0.0
+Version 2.0.0 has been released. Checkout [this discussion](https://github.com/krlove/eloquent-model-generator/discussions/89) for more details and upgrade instructions.
+
 ## Installation
 Step 1. Add Eloquent Model Generator to your project:
 ```
