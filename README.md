@@ -173,7 +173,7 @@ php artisan krlove:generate:models --skip-table=users --skip-table=roles
 ```
 Note that table names must be specified without prefix if you have one configured.
 
-## Customisation
+## Customization
 You can hook into the process of model generation by adding your own instances of `Krlove\EloquentModelGenerator\Processor\ProcessorInterface` and tagging it with `GeneratorServiceProvider::PROCESSOR_TAG`.
 
 Imagine you want to override Eloquent's `perPage` property value.
