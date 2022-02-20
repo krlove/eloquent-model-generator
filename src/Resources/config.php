@@ -8,4 +8,5 @@ return [
     'date_format'     => null,
     'connection'      => null,
     'backup'          => null,
+    'abstract_class'  => null,
 ];

@@ -30,8 +30,12 @@ class TableNameProcessor implements ProcessorInterface
         $className     = $config->get('class_name');
         $baseClassName = $config->get('base_class_name');
         $tableName     = $config->get('table_name');
+        $abstract      = $config->get('abstract_class');
 
-        $model->setName(new ClassNameModel($className, $this->helper->getShortClassName($baseClassName)));
+        $classNameModel = new ClassNameModel($className, $this->helper->getShortClassName($baseClassName));
+        $classNameModel->setAbstract($abstract);
+
+        $model->setName($classNameModel);
         $model->addUses(new UseClassModel(ltrim($baseClassName, '\\')));
         $model->setTableName($tableName ?: $this->helper->getDefaultTableName($className));
 
