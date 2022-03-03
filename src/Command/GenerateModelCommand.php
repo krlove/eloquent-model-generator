@@ -61,11 +61,21 @@ class GenerateModelCommand extends Command
         $this->fire();
     }
 
+    protected function isLumen()
+    {
+        return stripos($this->getApplication()->getVersion(), 'Lumen') !== false;
+    }
+
     /**
      * @return Config
      */
     protected function createConfig()
     {
+        // Load configuration eloquent_model_generator.php manually for Lumen
+        if ($this->isLumen() && file_exists(base_path() . '/config/eloquent_model_generator.php')) {
+            $this->getLaravel()->configure('eloquent_model_generator');
+        }
+
         $config = [];
 
         foreach ($this->getArguments() as $argument) {
