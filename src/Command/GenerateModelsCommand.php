@@ -36,6 +36,7 @@ class GenerateModelsCommand extends Command
             }
 
             $config->setClassName(EmgHelper::getClassNameByTableName($tableName));
+            $config->setTableName($tableName);
             $model = $this->generator->generateModel($config);
             $this->saveModel($model);
 
