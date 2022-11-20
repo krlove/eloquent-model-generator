@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+2022-11-20, v2.0.1
+-----------------
+* Restore service autodiscovery (issue [#92](https://github.com/krlove/eloquent-model-generator/issues/92))
+* Actually register custom sql type mappings (issue [#97](https://github.com/krlove/eloquent-model-generator/issues/97))
+
 2022-02-19, v2.0.0
 -----------------
 * Minimum supported versions: PHP 8.0 and Laravel 9
