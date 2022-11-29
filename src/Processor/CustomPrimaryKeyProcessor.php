@@ -12,7 +12,7 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class CustomPrimaryKeyProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager, private TypeRegistry $typeRegistry) {}
+    public function __construct(private DatabaseManager $databaseManager) {}
 
     public function process(EloquentModel $model, Config $config): void
     {
@@ -39,10 +39,11 @@ class CustomPrimaryKeyProcessor implements ProcessorInterface
         }
 
         if ($column->getType()->getName() !== 'integer') {
+            $typeRegistry = app(TypeRegistry::class);
             $keyTypeProperty = new PropertyModel(
                 'keyType',
                 'protected',
-                $this->typeRegistry->resolveType($column->getType()->getName())
+                $typeRegistry->resolveType($column->getType()->getName())
             );
             $keyTypeProperty->setDocBlock(
                 new DocBlockModel('The "type" of the auto-incrementing ID.', '', '@var string')
