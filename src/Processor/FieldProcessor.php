@@ -13,7 +13,7 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class FieldProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager, private TypeRegistry $typeRegistry) {}
+    public function __construct(private DatabaseManager $databaseManager) {}
     
     public function process(EloquentModel $model, Config $config): void
     {
@@ -22,11 +22,12 @@ class FieldProcessor implements ProcessorInterface
         $tableDetails = $schemaManager->listTableDetails(Prefix::add($model->getTableName()));
         $primaryColumnNames = $tableDetails->getPrimaryKey() ? $tableDetails->getPrimaryKey()->getColumns() : [];
 
+        $typeRegistry = app(TypeRegistry::class);
         $columnNames = [];
         foreach ($tableDetails->getColumns() as $column) {
             $model->addProperty(new VirtualPropertyModel(
                 $column->getName(),
-                $this->typeRegistry->resolveType($column->getType()->getName())
+                $typeRegistry->resolveType($column->getType()->getName())
             ));
 
             if (!in_array($column->getName(), $primaryColumnNames)) {
