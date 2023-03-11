@@ -1,0 +1,106 @@
+name: CI against Laravel 10.x
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '56 4 * * *'
+
+jobs:
+  lint:
+    name: "Lint PHP"
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.2"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: none
+          tools: composer:v2.4
+      - name: "Install with Laravel 10.x"
+        run: |
+          rm -rf composer.lock vendor/ ; \
+          composer require \
+            "illuminate/database":"^10.0" \
+            "illuminate/support":"^10.0" \
+            "illuminate/config":"^10.0" \
+            "illuminate/console":"^10.0" ; \
+          git restore composer.json
+
+      - name: "Lint PHP files"
+        run: |
+          find src tests -name '*.php' -print0 | xargs -r -0 -n 1 -P 4 php -l
+
+  unit-tests:
+    name: "Unit tests"
+    runs-on: ubuntu-22.04
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.2"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: none
+          tools: composer:v2.4
+      - name: "Install with Laravel 10.x"
+        run: |
+          rm -rf composer.lock vendor/ ; \
+          composer require \
+            "illuminate/database":"^10.0" \
+            "illuminate/support":"^10.0" \
+            "illuminate/config":"^10.0" \
+            "illuminate/console":"^10.0" ; \
+          git restore composer.json
+      - name: "Run tests"
+        run: |
+          [[ ! -f vendor/bin/phpunit ]] && echo "PHPUnit binary missing" && exit 1
+          php vendor/bin/phpunit -c phpunit.xml.dist tests/unit/
+
+  integration-tests:
+    name: "Integration tests"
+    runs-on: ubuntu-22.04
+    needs: unit-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.2"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: none
+          tools: composer:v2.4
+      - name: "Install with Laravel 10.x"
+        run: |
+          rm -rf composer.lock vendor/ ; \
+          composer require \
+            "illuminate/database":"^10.0" \
+            "illuminate/support":"^10.0" \
+            "illuminate/config":"^10.0" \
+            "illuminate/console":"^10.0" ; \
+          git restore composer.json
+      - name: "Run tests"
+        run: |
+          [[ ! -f vendor/bin/phpunit ]] && echo "PHPUnit binary missing" && exit 1
+          php vendor/bin/phpunit -c phpunit.xml.dist tests/integration/
