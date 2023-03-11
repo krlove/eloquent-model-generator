@@ -28,9 +28,17 @@ class TypeRegistry
         'guid'         => 'string',
         'enum'         => 'string',
     ];
+    protected bool $defaultTypesRegistered = false;
 
     public function __construct(private DatabaseManager $databaseManager)
     {
+    }
+
+    public function registerDefaultTypes(): void
+    {
+        if ($this->defaultTypesRegistered) {
+            return;
+        }
         foreach ($this->types as $sqlType => $phpType) {
             $this->registerDoctrineTypeMapping($sqlType, $phpType);
         }

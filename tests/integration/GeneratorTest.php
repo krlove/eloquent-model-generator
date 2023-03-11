@@ -46,6 +46,7 @@ class GeneratorTest extends TestCase
             ->willReturn(self::$connection);
 
         $typeRegistry = new TypeRegistry($databaseManagerMock);
+        $typeRegistry->registerDefaultTypes();
 
         $this->generator = new Generator([
             new CustomPrimaryKeyProcessor($databaseManagerMock, $typeRegistry),
