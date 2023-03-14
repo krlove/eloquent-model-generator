@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property integer $id
- * @property string $path
  * @property integer $user_id
+ * @property string $path
  * @property User $user
  */
 class Avatar extends Model
@@ -15,7 +15,7 @@ class Avatar extends Model
     /**
      * @var array
      */
-    protected $fillable = ['path', 'user_id'];
+    protected $fillable = ['user_id', 'path'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
