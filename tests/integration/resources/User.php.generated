@@ -19,8 +19,7 @@ class User extends Model
     /**
      * @var array
      */
-    protected $fillable = ['username', 'is_active', 'organization_id'];
-
+    protected $fillable = ['organization_id', 'username', 'is_active'];
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
