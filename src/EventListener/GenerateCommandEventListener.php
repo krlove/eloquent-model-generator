@@ -12,7 +12,9 @@ class GenerateCommandEventListener
         'krlove:generate:models',
     ];
 
-    public function __construct(private TypeRegistry $typeRegistry) {}
+    public function __construct(private TypeRegistry $typeRegistry)
+    {
+    }
 
     public function handle(CommandStarting $event): void
     {
@@ -20,6 +22,7 @@ class GenerateCommandEventListener
             return;
         }
 
+        /* @phpstan-ignore-next-line */
         $userTypes = config('eloquent_model_generator.db_types', []);
         foreach ($userTypes as $type => $value) {
             $this->typeRegistry->registerType($type, $value);

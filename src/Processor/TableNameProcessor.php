@@ -15,7 +15,9 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class TableNameProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager) {}
+    public function __construct(private DatabaseManager $databaseManager)
+    {
+    }
 
     public function process(EloquentModel $model, Config $config): void
     {

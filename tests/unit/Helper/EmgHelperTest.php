@@ -13,12 +13,16 @@ class EmgHelperTest extends TestCase
     /**
      * @dataProvider fqcnProvider
      */
-    public function testGetShortClassName(string $fqcn, string $expected): void
+    public static function testGetShortClassName(string $fqcn, string $expected): void
     {
-        $this->assertEquals($expected, EmgHelper::getShortClassName($fqcn));
+        self::assertSame($expected, EmgHelper::getShortClassName($fqcn));
     }
 
-    public function fqcnProvider(): array
+/**
+ * @return array<int, array<string, string>>  // Specify the type hint for FQCNs (e.g., string)
+ */
+
+    public static function fqcnProvider(): array
     {
         return [
             ['fqcn' => Model::class, 'expected' => 'Model'],
@@ -32,10 +36,13 @@ class EmgHelperTest extends TestCase
      */
     public function testGetTableNameByClassName(string $className, string $expected): void
     {
-        $this->assertEquals($expected, EmgHelper::getTableNameByClassName($className));
+        self::assertSame($expected, EmgHelper::getTableNameByClassName($className));
     }
 
-    public function classNameProvider(): array
+    /**
+ * @return array<int, array<string, string>>  // Specify the type hint for classNameProvider
+ */
+    public static function classNameProvider(): array
     {
         return [
             ['className' => 'User', 'expected' => 'users'],
@@ -53,7 +60,10 @@ class EmgHelperTest extends TestCase
         $this->assertEquals($expected, EmgHelper::getClassNameByTableName($tableName));
     }
 
-    public function tableNameToClassNameProvider(): array
+/**
+ * @return array<int, array<string, string>>  // Specify the type hint for tableNameToClassNameProvider
+ */
+    public static function tableNameToClassNameProvider(): array
     {
         return [
             ['className' => 'users', 'expected' => 'User'],
@@ -71,7 +81,11 @@ class EmgHelperTest extends TestCase
         $this->assertEquals($expected, EmgHelper::getDefaultForeignColumnName($tableName));
     }
 
-    public function tableNameToForeignColumnNameProvider(): array
+    
+            /**
+ * @return array<int, array<string, string>>  // Specify the type hint for tableNameToForeignColumnNameProvider
+ */
+    public static function tableNameToForeignColumnNameProvider(): array
     {
         return [
             ['tableName' => 'organizations', 'expected' => 'organization_id'],
@@ -83,12 +97,15 @@ class EmgHelperTest extends TestCase
     /**
      * @dataProvider tableNamesProvider
      */
-    public function testGetDefaultJoinTableName(string $tableNameOne, string $tableNameTwo, string $expected): void
+    public static function testGetDefaultJoinTableName(string $tableNameOne, string $tableNameTwo, string $expected): void
     {
-        $this->assertEquals($expected, EmgHelper::getDefaultJoinTableName($tableNameOne, $tableNameTwo));
+        self::assertSame($expected, EmgHelper::getDefaultJoinTableName($tableNameOne, $tableNameTwo));
     }
 
-    public function tableNamesProvider(): array
+/**
+ * @return array<int, array<string, string>>  // Specify the type hint for tableNamesProvider
+ */
+    public static function tableNamesProvider(): array
     {
         return [
             ['tableNameOne' => 'users', 'tableNameTwo' => 'roles', 'expected' => 'role_user'],

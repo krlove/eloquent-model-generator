@@ -36,8 +36,10 @@ trait GenerateCommandTrait
     {
         $path = $this->option('output-path');
         if ($path === null) {
+            /* @phpstan-ignore-next-line */
             $path = app()->path('Models');
         } elseif (!str_starts_with($path, '/')) {
+            /* @phpstan-ignore-next-line */
             $path = app()->path($path);
         }
 

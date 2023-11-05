@@ -14,7 +14,9 @@ use Krlove\EloquentModelGenerator\Model\HasOne;
 
 class RelationProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager) {}
+    public function __construct(private DatabaseManager $databaseManager)
+    {
+    }
 
     public function process(EloquentModel $model, Config $config): void
     {

@@ -1,0 +1,12 @@
+// .php_cs.dist
+return PhpCsFixer\Config::create()
+    ->setRules([
+        // Your rules here...
+    ])
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+            ->in([
+                __DIR__.'/src',  // Replace with your source code directory
+                __DIR__.'/tests', // Replace with your tests directory
+            ])
+    );

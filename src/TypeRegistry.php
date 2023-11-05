@@ -4,6 +4,10 @@ namespace Krlove\EloquentModelGenerator;
 
 use Illuminate\Database\DatabaseManager;
 
+/**
+ * array<string, string>
+ */
+
 class TypeRegistry
 {
     protected array $types = [

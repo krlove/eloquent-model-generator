@@ -17,6 +17,7 @@ use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
 
 class GeneratorTest extends TestCase
 {
@@ -32,7 +33,12 @@ class GeneratorTest extends TestCase
         ]);
         self::$connection = new SQLiteConnection($pdo);
 
-        $queries = explode("\n\n", file_get_contents(__DIR__ . '/resources/schema.sql'));
+        $schemaFile = file_get_contents(__DIR__ . '/resources/schema.sql');
+        if ($schemaFile) {
+            $queries = explode("\n\n", $schemaFile);
+        } else {
+            throw new \Exception('No schema file not found');
+        }
         foreach ($queries as $query) {
             self::$connection->statement($query);
         }
@@ -55,6 +61,8 @@ class GeneratorTest extends TestCase
             new RelationProcessor($databaseManagerMock),
             new TableNameProcessor($databaseManagerMock),
         ]);
+
+        
     }
 
     /**
@@ -71,7 +79,11 @@ class GeneratorTest extends TestCase
         $this->assertEquals(file_get_contents(__DIR__ . '/resources/' . $modelName . '.php.generated'), $model->render());
     }
 
-    public function modelNameProvider(): array
+/**
+ * @return array<array<string, string>>
+ */
+
+    public static function modelNameProvider(): array
     {
         return [
             [
