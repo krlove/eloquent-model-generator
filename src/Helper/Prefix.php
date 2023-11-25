@@ -4,11 +4,11 @@ namespace Krlove\EloquentModelGenerator\Helper;
 
 class Prefix
 {
-    private static ?string $prefix = null;
+    private static string $prefix = '';
 
-    public static function setPrefix(?string $prefix): void
+    public static function setPrefix(string $prefix): void
     {
-        self::$prefix = (string) $prefix;
+        self::$prefix = $prefix;
     }
 
     public static function add(string $tableName): string

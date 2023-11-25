@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property integer $id
+ * @property integer $author_id
  * @property string $title
  * @property string $content
- * @property integer $author_id
  * @property User $user
  */
 class Post extends Model
@@ -16,7 +16,7 @@ class Post extends Model
     /**
      * @var array
      */
-    protected $fillable = ['title', 'content', 'author_id'];
+    protected $fillable = ['author_id', 'title', 'content'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
