@@ -1,5 +1,11 @@
 CHANGELOG
 =========
+2023-11-25, v2.0.2
+-----------------
+* Add Laravel 10 support
+* Remove deprecations
+* Adjust tests
+
 2022-11-20, v2.0.1
 -----------------
 * Restore service autodiscovery (issue [#92](https://github.com/krlove/eloquent-model-generator/issues/92))
