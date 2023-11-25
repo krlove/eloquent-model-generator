@@ -76,6 +76,14 @@ return [
     'connection' => null,
     'no_backup' => null,
     'db_types' => null,
+    'processors'      => [
+        '\Krlove\EloquentModelGenerator\Processor\FieldProcessor',
+        '\Krlove\EloquentModelGenerator\Processor\NamespaceProcessor',
+        '\Krlove\EloquentModelGenerator\Processor\RelationProcessor',
+        '\Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor',
+        '\Krlove\EloquentModelGenerator\Processor\TableNameProcessor',
+        '\Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor',
+    ],
 ];
 ```
 

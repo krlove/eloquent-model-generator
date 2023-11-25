@@ -31,14 +31,13 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->app->singleton(TypeRegistry::class);
         $this->app->singleton(GenerateCommandEventListener::class);
 
-        $this->app->tag([
-            FieldProcessor::class,
-            NamespaceProcessor::class,
-            RelationProcessor::class,
-            CustomPropertyProcessor::class,
-            TableNameProcessor::class,
-            CustomPrimaryKeyProcessor::class,
-        ], self::PROCESSOR_TAG);
+        if (config('eloquent_model_generator.processors')) {
+            $generators = config('eloquent_model_generator.processors');
+        } else {
+            throw new \RuntimeException('No processors configured');
+        }
+
+        $this->app->tag($generators, self::PROCESSOR_TAG);
 
         $this->app->bind(Generator::class, function ($app) {
             return new Generator($app->tagged(self::PROCESSOR_TAG));
