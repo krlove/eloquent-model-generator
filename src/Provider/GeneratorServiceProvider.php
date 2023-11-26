@@ -14,6 +14,7 @@ use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
 use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
 use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
+use Krlove\EloquentModelGenerator\Processor\SoftDeleteTraitProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 
@@ -38,6 +39,7 @@ class GeneratorServiceProvider extends ServiceProvider
             CustomPropertyProcessor::class,
             TableNameProcessor::class,
             CustomPrimaryKeyProcessor::class,
+            SoftDeleteTraitProcessor::class,
         ], self::PROCESSOR_TAG);
 
         $this->app->bind(Generator::class, function ($app) {
