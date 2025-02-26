@@ -2,6 +2,8 @@
 
 namespace Krlove\EloquentModelGenerator\Exception;
 
-class GeneratorException extends \Exception
+use Exception;
+
+class GeneratorException extends Exception
 {
 }

@@ -1,5 +1,10 @@
 CHANGELOG
 =========
+
+2025-01-28, v2.0.3
+-----------------
+* Do not connect to database in command constructors 
+
 2023-11-25, v2.0.2
 -----------------
 * Add Laravel 10 support

@@ -13,6 +13,7 @@ use Krlove\CodeGenerator\Model\MethodModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
 use Krlove\EloquentModelGenerator\Exception\GeneratorException;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
+use ReflectionObject;
 
 class EloquentModel extends ClassModel
 {
@@ -34,22 +35,22 @@ class EloquentModel extends ClassModel
     {
         $relationClass = EmgHelper::getClassNameByTableName($relation->getTableName());
         if ($relation instanceof HasOne) {
-            $name = Str::singular(Str::camel($relation->getTableName()));
+            $name     = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasOne::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof HasMany) {
-            $name = Str::plural(Str::camel($relation->getTableName()));
+            $name     = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentHasMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
         } elseif ($relation instanceof BelongsTo) {
-            $name = Str::singular(Str::camel($relation->getTableName()));
+            $name     = Str::singular(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentBelongsTo::class);
 
             $virtualPropertyType = $relationClass;
         } elseif ($relation instanceof BelongsToMany) {
-            $name = Str::plural(Str::camel($relation->getTableName()));
+            $name     = Str::plural(Str::camel($relation->getTableName()));
             $docBlock = sprintf('@return \%s', EloquentBelongsToMany::class);
 
             $virtualPropertyType = sprintf('%s[]', $relationClass);
@@ -67,11 +68,11 @@ class EloquentModel extends ClassModel
 
     protected function createRelationMethodBody(Relation $relation): string
     {
-        $reflectionObject = new \ReflectionObject($relation);
-        $name = Str::camel($reflectionObject->getShortName());
+        $reflectionObject = new ReflectionObject($relation);
+        $name             = Str::camel($reflectionObject->getShortName());
 
         $arguments = [
-            $this->getNamespace()->getNamespace() . '\\' . EmgHelper::getClassNameByTableName($relation->getTableName())
+            $this->getNamespace()->getNamespace() . '\\' . EmgHelper::getClassNameByTableName($relation->getTableName()),
         ];
 
         if ($relation instanceof BelongsToMany) {
@@ -117,11 +118,12 @@ class EloquentModel extends ClassModel
 
     protected function createRelationMethodArguments(array $array): string
     {
-        $array = array_reverse($array);
+        $array     = array_reverse($array);
         $milestone = false;
+
         foreach ($array as $key => &$item) {
-            if (!$milestone) {
-                if (!is_string($item)) {
+            if (! $milestone) {
+                if (! is_string($item)) {
                     unset($array[$key]);
                 } else {
                     $milestone = true;
