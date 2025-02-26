@@ -15,17 +15,21 @@ use Krlove\EloquentModelGenerator\Model\EloquentModel;
 
 class TableNameProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager) {}
+    public function __construct(
+        private DatabaseManager $databaseManager,
+    ) {
+    }
 
     public function process(EloquentModel $model, Config $config): void
     {
-        $className = $config->getClassName();
+        $className     = $config->getClassName();
         $baseClassName = $config->getBaseClassName();
-        $tableName = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className);
+        $tableName     = $config->getTableName() ?: EmgHelper::getTableNameByClassName($className);
 
-        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
+        $schemaManager     = $this->databaseManager->connection($config->getConnection())->getSchemaBuilder();
         $prefixedTableName = Prefix::add($tableName);
-        if (!$schemaManager->tablesExist($prefixedTableName)) {
+
+        if (! $schemaManager->hasTable($prefixedTableName)) {
             throw new GeneratorException(sprintf('Table %s does not exist', $prefixedTableName));
         }
 

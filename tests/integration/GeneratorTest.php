@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\SQLiteConnection;
 use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Generator;
-use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Processor\CustomPrimaryKeyProcessor;
 use Krlove\EloquentModelGenerator\Processor\CustomPropertyProcessor;
 use Krlove\EloquentModelGenerator\Processor\FieldProcessor;
@@ -16,6 +15,7 @@ use Krlove\EloquentModelGenerator\Processor\NamespaceProcessor;
 use Krlove\EloquentModelGenerator\Processor\RelationProcessor;
 use Krlove\EloquentModelGenerator\Processor\TableNameProcessor;
 use Krlove\EloquentModelGenerator\TypeRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class GeneratorTest extends TestCase
@@ -26,8 +26,9 @@ class GeneratorTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         $connector = new SQLiteConnector();
+
         $pdo = $connector->connect([
-            'database' => ':memory:',
+            'database'                => ':memory:',
             'foreign_key_constraints' => true,
         ]);
         self::$connection = new SQLiteConnection($pdo);
@@ -57,9 +58,7 @@ class GeneratorTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider modelNameProvider
-     */
+    #[DataProvider('modelNameProvider')]
     public function testGeneratedModel(string $modelName): void
     {
         $config = (new Config())
@@ -71,7 +70,7 @@ class GeneratorTest extends TestCase
         $this->assertEquals(file_get_contents(__DIR__ . '/resources/' . $modelName . '.php.generated'), $model->render());
     }
 
-    public function modelNameProvider(): array
+    public static function modelNameProvider(): array
     {
         return [
             [

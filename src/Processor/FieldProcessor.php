@@ -3,6 +3,8 @@
 namespace Krlove\EloquentModelGenerator\Processor;
 
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\BlueprintState;
 use Krlove\CodeGenerator\Model\DocBlockModel;
 use Krlove\CodeGenerator\Model\PropertyModel;
 use Krlove\CodeGenerator\Model\VirtualPropertyModel;
@@ -13,24 +15,35 @@ use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class FieldProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager, private TypeRegistry $typeRegistry) {}
-    
+    public function __construct(
+        private DatabaseManager $databaseManager,
+        private TypeRegistry $typeRegistry,
+    ) {
+    }
+
     public function process(EloquentModel $model, Config $config): void
     {
-        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
+        $connection    = $this->databaseManager->connection($config->getConnection());
+        $schemaGrammar = $connection->getSchemaGrammar();
 
-        $tableDetails = $schemaManager->listTableDetails(Prefix::add($model->getTableName()));
-        $primaryColumnNames = $tableDetails->getPrimaryKey() ? $tableDetails->getPrimaryKey()->getColumns() : [];
+        $tableName      = Prefix::add($model->getTableName());
+        $blueprint      = new Blueprint($tableName);
+        $blueprintState = new BlueprintState($blueprint, $connection, $schemaGrammar);
+        $columns        = $blueprintState->getColumns();
+
+        $primaryKey         = $blueprintState->getPrimaryKey();
+        $primaryColumnNames = $primaryKey->columns;
 
         $columnNames = [];
-        foreach ($tableDetails->getColumns() as $column) {
+
+        foreach ($columns as $column) {
             $model->addProperty(new VirtualPropertyModel(
-                $column->getName(),
-                $this->typeRegistry->resolveType($column->getType()->getName())
+                $column->name,
+                $this->typeRegistry->resolveType($column->type)
             ));
 
-            if (!in_array($column->getName(), $primaryColumnNames)) {
-                $columnNames[] = $column->getName();
+            if (! in_array($column->name, $primaryColumnNames)) {
+                $columnNames[] = $column->name;
             }
         }
 

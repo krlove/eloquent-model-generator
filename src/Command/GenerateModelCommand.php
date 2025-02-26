@@ -14,18 +14,16 @@ class GenerateModelCommand extends Command
 
     protected $name = 'krlove:generate:model';
 
-    public function __construct(private Generator $generator, private DatabaseManager $databaseManager)
-    {
-        parent::__construct();
-    }
-
     public function handle()
     {
+        $generator       = $this->resolve(Generator::class);
+        $databaseManager = $this->resolve(DatabaseManager::class);
+
         $config = $this->createConfig();
         $config->setClassName($this->argument('class-name'));
-        Prefix::setPrefix($this->databaseManager->connection($config->getConnection())->getTablePrefix());
+        Prefix::setPrefix($databaseManager->connection($config->getConnection())->getTablePrefix());
 
-        $model = $this->generator->generateModel($config);
+        $model = $generator->generateModel($config);
         $this->saveModel($model);
 
         $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));

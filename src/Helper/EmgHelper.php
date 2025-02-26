@@ -2,7 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator\Helper;
 
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Str;
 
 class EmgHelper
@@ -39,15 +38,15 @@ class EmgHelper
         return implode('_', $tables);
     }
 
-    public static function isColumnUnique(Table $table, string $column): bool
+    public static function isColumnUniqueIndex(array $indexes, string $column): bool
     {
-        foreach ($table->getIndexes() as $index) {
-            $indexColumns = $index->getColumns();
+        foreach ($indexes as $index) {
+            $indexColumns = $index['columns'];
             if (count($indexColumns) !== 1) {
                 continue;
             }
             $indexColumn = $indexColumns[0];
-            if ($indexColumn === $column && $index->isUnique()) {
+            if ($indexColumn === $column && $index['unique']) {
                 return true;
             }
         }

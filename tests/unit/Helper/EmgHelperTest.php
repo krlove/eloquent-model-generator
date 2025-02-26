@@ -2,160 +2,142 @@
 
 namespace unit\Helper;
 
-use Doctrine\DBAL\Schema\Index;
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\Eloquent\Model;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EmgHelperTest extends TestCase
 {
-    /**
-     * @dataProvider fqcnProvider
-     */
+    #[DataProvider('fqcnProvider')]
     public function testGetShortClassName(string $fqcn, string $expected): void
     {
         $this->assertEquals($expected, EmgHelper::getShortClassName($fqcn));
     }
 
-    public function fqcnProvider(): array
+    public static function fqcnProvider(): array
     {
         return [
-            ['fqcn' => Model::class, 'expected' => 'Model'],
+            ['fqcn' => Model::class,  'expected' => 'Model'],
             ['fqcn' => 'Custom\Name', 'expected' => 'Name'],
-            ['fqcn' => 'ShortName', 'expected' => 'ShortName'],
+            ['fqcn' => 'ShortName',   'expected' => 'ShortName'],
         ];
     }
 
-    /**
-     * @dataProvider classNameProvider
-     */
+    #[DataProvider('classNameProvider')]
     public function testGetTableNameByClassName(string $className, string $expected): void
     {
         $this->assertEquals($expected, EmgHelper::getTableNameByClassName($className));
     }
 
-    public function classNameProvider(): array
+    public static function classNameProvider(): array
     {
         return [
-            ['className' => 'User', 'expected' => 'users'],
+            ['className' => 'User',           'expected' => 'users'],
             ['className' => 'ServiceAccount', 'expected' => 'service_accounts'],
-            ['className' => 'Mouse', 'expected' => 'mice'],
-            ['className' => 'D', 'expected' => 'ds'],
+            ['className' => 'Mouse',          'expected' => 'mice'],
+            ['className' => 'D',              'expected' => 'ds'],
         ];
     }
 
-    /**
-     * @dataProvider tableNameToClassNameProvider
-     */
+    #[DataProvider('tableNameToClassNameProvider')]
     public function testGetClassNameByTableName(string $tableName, string $expected): void
     {
         $this->assertEquals($expected, EmgHelper::getClassNameByTableName($tableName));
     }
 
-    public function tableNameToClassNameProvider(): array
+    public static function tableNameToClassNameProvider(): array
     {
         return [
-            ['className' => 'users', 'expected' => 'User'],
-            ['className' => 'service_accounts', 'expected' => 'ServiceAccount'],
-            ['className' => 'mice', 'expected' => 'Mouse'],
-            ['className' => 'ds', 'expected' => 'D'],
+            ['tableName' => 'users',            'expected' => 'User'],
+            ['tableName' => 'service_accounts', 'expected' => 'ServiceAccount'],
+            ['tableName' => 'mice',             'expected' => 'Mouse'],
+            ['tableName' => 'ds',               'expected' => 'D'],
         ];
     }
 
-    /**
-     * @dataProvider tableNameToForeignColumnNameProvider
-     */
+    #[DataProvider('tableNameToForeignColumnNameProvider')]
     public function testGetDefaultForeignColumnName(string $tableName, string $expected): void
     {
         $this->assertEquals($expected, EmgHelper::getDefaultForeignColumnName($tableName));
     }
 
-    public function tableNameToForeignColumnNameProvider(): array
+    public static function tableNameToForeignColumnNameProvider(): array
     {
         return [
-            ['tableName' => 'organizations', 'expected' => 'organization_id'],
+            ['tableName' => 'organizations',    'expected' => 'organization_id'],
             ['tableName' => 'service_accounts', 'expected' => 'service_account_id'],
-            ['tableName' => 'mice', 'expected' => 'mouse_id'],
+            ['tableName' => 'mice',             'expected' => 'mouse_id'],
         ];
     }
 
-    /**
-     * @dataProvider tableNamesProvider
-     */
+    #[DataProvider('tableNamesProvider')]
     public function testGetDefaultJoinTableName(string $tableNameOne, string $tableNameTwo, string $expected): void
     {
         $this->assertEquals($expected, EmgHelper::getDefaultJoinTableName($tableNameOne, $tableNameTwo));
     }
 
-    public function tableNamesProvider(): array
+    public static function tableNamesProvider(): array
     {
         return [
-            ['tableNameOne' => 'users', 'tableNameTwo' => 'roles', 'expected' => 'role_user'],
-            ['tableNameOne' => 'roles', 'tableNameTwo' => 'users', 'expected' => 'role_user'],
+            ['tableNameOne' => 'users',    'tableNameTwo' => 'roles',    'expected' => 'role_user'],
+            ['tableNameOne' => 'roles',    'tableNameTwo' => 'users',    'expected' => 'role_user'],
             ['tableNameOne' => 'accounts', 'tableNameTwo' => 'profiles', 'expected' => 'account_profile'],
         ];
     }
 
     public function testIsColumnUnique(): void
     {
-        $indexMock = $this->createMock(Index::class);
-        $indexMock->expects($this->once())
-            ->method('getColumns')
-            ->willReturn(['column_0']);
+        $indexes = [
+            [
+                'name'    => null,
+                'primary' => false,
+                'type'    => null,
+                'unique'  => true,
 
-        $indexMock->expects($this->once())
-            ->method('isUnique')
-            ->willReturn(true);
+                'columns' => [
+                    'column_0',
+                ],
+            ],
+        ];
 
-        $indexMocks = [$indexMock];
-
-        $tableMock = $this->createMock(Table::class);
-        $tableMock->expects($this->once())
-            ->method('getIndexes')
-            ->willReturn($indexMocks);
-
-        $this->assertTrue(EmgHelper::isColumnUnique($tableMock, 'column_0'));
+        $this->assertTrue(EmgHelper::isColumnUniqueIndex($indexes, 'column_0'));
     }
 
     public function testIsColumnUniqueTwoIndexColumns(): void
     {
-        $indexMock = $this->createMock(Index::class);
-        $indexMock->expects($this->once())
-            ->method('getColumns')
-            ->willReturn(['column_0', 'column_1']);
+        $indexes = [
+            [
+                'name'    => null,
+                'primary' => false,
+                'type'    => null,
+                'unique'  => true,
 
-        $indexMock->expects($this->never())
-            ->method('isUnique');
+                'columns' => [
+                    'column_0',
+                    'column_1',
+                ],
+            ],
+        ];
 
-        $indexMocks = [$indexMock];
-
-        $tableMock = $this->createMock(Table::class);
-        $tableMock->expects($this->once())
-            ->method('getIndexes')
-            ->willReturn($indexMocks);
-
-        $this->assertFalse(EmgHelper::isColumnUnique($tableMock, 'column_0'));
+        $this->assertFalse(EmgHelper::isColumnUniqueIndex($indexes, 'column_0'));
     }
 
     public function testIsColumnUniqueIndexNotUnique(): void
     {
-        $indexMock = $this->createMock(Index::class);
-        $indexMock->expects($this->once())
-            ->method('getColumns')
-            ->willReturn(['column_0']);
+        $indexes = [
+            [
+                'name'    => null,
+                'primary' => true,
+                'type'    => null,
+                'unique'  => false,
 
-        $indexMock->expects($this->once())
-            ->method('isUnique')
-            ->willReturn(false);
+                'columns' => [
+                    'column_0',
+                ],
+            ],
+        ];
 
-        $indexMocks = [$indexMock];
-
-        $tableMock = $this->createMock(Table::class);
-        $tableMock->expects($this->once())
-            ->method('getIndexes')
-            ->willReturn($indexMocks);
-
-        $this->assertFalse(EmgHelper::isColumnUnique($tableMock, 'column_0'));
+        $this->assertFalse(EmgHelper::isColumnUniqueIndex($indexes, 'column_0'));
     }
 }

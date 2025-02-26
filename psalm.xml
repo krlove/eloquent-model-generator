@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<psalm
+	cacheDirectory=".psalm-cache"
+    errorLevel="7"
+    findUnusedCode="false"
+    findUnusedBaselineEntry="true"
+    findUnusedIssueHandlerSuppression="false"
+    phpVersion="8.3"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+<!-- @TODO -->
+<!--
+-->
+        <directory name="tests" />
+        <ignoreFiles>
+<!-- @TODO -->
+<!--
+			<directory name="tests" />
+-->
+			<directory name="vendor" />
+			<directory name="tests/integration/resources" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+				<referencedFunction name="app" />
+
+				<file name="src/Command/GenerateCommandTrait.php" />
+			</errorLevel>
+		</UndefinedFunction>
+
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+				<referencedFunction name="config" />
+
+				<file name="src/Command/GenerateCommandTrait.php" />
+				<file name="src/EventListener/GenerateCommandEventListener.php" />
+			</errorLevel>
+		</UndefinedFunction>
+    </issueHandlers>
+
+</psalm>

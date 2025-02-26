@@ -3,6 +3,8 @@
 namespace Krlove\EloquentModelGenerator\Processor;
 
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\BlueprintState;
 use Krlove\EloquentModelGenerator\Config\Config;
 use Krlove\EloquentModelGenerator\Helper\EmgHelper;
 use Krlove\EloquentModelGenerator\Helper\Prefix;
@@ -14,51 +16,67 @@ use Krlove\EloquentModelGenerator\Model\HasOne;
 
 class RelationProcessor implements ProcessorInterface
 {
-    public function __construct(private DatabaseManager $databaseManager) {}
+    public function __construct(
+        private DatabaseManager $databaseManager,
+    ) {
+    }
 
     public function process(EloquentModel $model, Config $config): void
     {
-        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
+        $connection    = $this->databaseManager->connection($config->getConnection());
+        $schemaBuilder = $connection->getSchemaBuilder();
+        $schemaGrammar = $connection->getSchemaGrammar();
 
         $prefixedTableName = Prefix::add($model->getTableName());
-        $tables = $schemaManager->listTables();
+        $tables            = $schemaBuilder->getTableListing();
+
         foreach ($tables as $table) {
-            $foreignKeys = $schemaManager->listTableForeignKeys($table->getName());
-            foreach ($foreignKeys as $name => $foreignKey) {
-                $localColumns = $foreignKey->getLocalColumns();
+            $tableName      = $table;
+            $blueprint      = new Blueprint($tableName);
+            $blueprintState = new BlueprintState($blueprint, $connection, $schemaGrammar);
+            $columns        = $blueprintState->getColumns();
+            $indexes        = $schemaBuilder->getIndexes($tableName);
+
+            $foreignKeys = $schemaBuilder->getForeignKeys($tableName);
+            foreach ($foreignKeys as $index => $foreignKey) {
+                $name         = $foreignKey['name'];
+                $localColumns = $foreignKey['columns'];
+
                 if (count($localColumns) !== 1) {
                     continue;
                 }
 
-                if ($table->getName() === $prefixedTableName) {
+                $foreignTableName    = $foreignKey['foreign_table'];
+                $foreignTableColumns = $foreignKey['foreign_columns'];
+
+                if ($tableName === $prefixedTableName) {
                     $relation = new BelongsTo(
-                        Prefix::remove($foreignKey->getForeignTableName()),
-                        $foreignKey->getLocalColumns()[0],
-                        $foreignKey->getForeignColumns()[0]
+                        Prefix::remove($foreignTableName),
+                        $localColumns[0],
+                        $foreignTableColumns[0]
                     );
                     $model->addRelation($relation);
-                } elseif ($foreignKey->getForeignTableName() === $prefixedTableName) {
-                    if (count($foreignKeys) === 2 && count($table->getColumns()) === 2) {
-                        $keys = array_keys($foreignKeys);
-                        $key = array_search($name, $keys) === 0 ? 1 : 0;
-                        $secondForeignKey = $foreignKeys[$keys[$key]];
-                        $secondForeignTable = Prefix::remove($secondForeignKey->getForeignTableName());
+                } elseif ($foreignTableName === $prefixedTableName) {
+                    if (count($foreignKeys) === 2 && count($columns) === 2) {
+                        $keyIndex           = 1 - $index;
+                        $secondForeignKey   = $foreignKeys[$keyIndex];
+                        $secondForeignTable = Prefix::remove($secondForeignKey['foreign_table']);
 
                         $relation = new BelongsToMany(
                             $secondForeignTable,
-                            Prefix::remove($table->getName()),
+                            Prefix::remove($tableName),
                             $localColumns[0],
-                            $secondForeignKey->getLocalColumns()[0]
+                            $secondForeignKey['columns'][0]
                         );
                         $model->addRelation($relation);
 
                         break;
                     } else {
-                        $tableName = Prefix::remove($table->getName());
+                        $tableName     = Prefix::remove($tableName);
                         $foreignColumn = $localColumns[0];
-                        $localColumn = $foreignKey->getForeignColumns()[0];
+                        $localColumn   = $foreignTableColumns[0];
 
-                        if (EmgHelper::isColumnUnique($table, $foreignColumn)) {
+                        if (EmgHelper::isColumnUniqueIndex($indexes, $foreignColumn)) {
                             $relation = new HasOne($tableName, $foreignColumn, $localColumn);
                         } else {
                             $relation = new HasMany($tableName, $foreignColumn, $localColumn);

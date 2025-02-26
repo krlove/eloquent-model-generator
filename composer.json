@@ -1,7 +1,6 @@
 {
-    "name": "krlove/eloquent-model-generator",
-    "description": "Eloquent Model Generator",
-    "version": "2.0.2",
+    "name": "magentron/eloquent-model-generator",
+    "description": "Eloquent Model Generator (forked from krlove/eloquent-model-generator",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -13,18 +12,30 @@
             "Krlove\\Tests\\Integration\\": "tests/integration"
         }
     },
+    "replace": {
+		"krlove/eloquent-model-generator": "<=2.0.2"
+	},
     "require": {
         "php": "^8.0",
-        "illuminate/database": "^9.0 || ^10.0",
-        "illuminate/support": "^9.0 || ^10.0",
-        "illuminate/config": "^9.0 || ^10.0",
-        "illuminate/console": "^9.0 || ^10.0",
+        "illuminate/database": "^11.0",
+        "illuminate/support": "^11.0",
+        "illuminate/config": "^11.0",
+        "illuminate/console": "^11.0",
         "doctrine/dbal": "^3.0",
         "krlove/code-generator": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "friendsofphp/php-cs-fixer": "^3.70",
+        "larastan/larastan": "^3.1",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11",
+        "symfony/var-dumper": "^7.2",
+        "vimeo/psalm": "~6.4.0"
     },
+	"config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+	},
     "extra": {
         "laravel": {
             "providers": [

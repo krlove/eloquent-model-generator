@@ -3,6 +3,7 @@
 namespace Krlove\EloquentModelGenerator\EventListener;
 
 use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Container\Container;
 use Krlove\EloquentModelGenerator\TypeRegistry;
 
 class GenerateCommandEventListener
@@ -12,17 +13,18 @@ class GenerateCommandEventListener
         'krlove:generate:models',
     ];
 
-    public function __construct(private TypeRegistry $typeRegistry) {}
-
     public function handle(CommandStarting $event): void
     {
-        if (!in_array($event->command, self::SUPPORTED_COMMANDS)) {
+        if (! in_array($event->command, self::SUPPORTED_COMMANDS)) {
             return;
         }
 
+        /** @var TypeRegistry $typeRegistry */
+        $typeRegistry = Container::getInstance()->make(TypeRegistry::class);
+
         $userTypes = config('eloquent_model_generator.db_types', []);
         foreach ($userTypes as $type => $value) {
-            $this->typeRegistry->registerType($type, $value);
+            $typeRegistry->registerType($type, $value);
         }
     }
 }

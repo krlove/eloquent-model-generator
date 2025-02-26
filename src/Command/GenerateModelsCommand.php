@@ -2,7 +2,6 @@
 
 namespace Krlove\EloquentModelGenerator\Command;
 
-use Illuminate\Config\Repository as AppConfig;
 use Illuminate\Console\Command;
 use Illuminate\Database\DatabaseManager;
 use Krlove\EloquentModelGenerator\Generator;
@@ -16,19 +15,20 @@ class GenerateModelsCommand extends Command
 
     protected $name = 'krlove:generate:models';
 
-    public function __construct(private Generator $generator, private DatabaseManager $databaseManager)
-    {
-        parent::__construct();
-    }
-
     public function handle()
     {
-        $config = $this->createConfig();
-        Prefix::setPrefix($this->databaseManager->connection($config->getConnection())->getTablePrefix());
+        $generator       = $this->resolve(Generator::class);
+        $databaseManager = $this->resolve(DatabaseManager::class);
 
-        $schemaManager = $this->databaseManager->connection($config->getConnection())->getDoctrineSchemaManager();
-        $tables = $schemaManager->listTables();
+        $config = $this->createConfig();
+        Prefix::setPrefix($databaseManager->connection($config->getConnection())->getTablePrefix());
+
+        $connection    = $databaseManager->connection($config->getConnection());
+        $schemaBuilder = $connection->getSchemaBuilder();
+
+        $tables     = $schemaBuilder->getTableListing();
         $skipTables = $this->option('skip-table');
+
         foreach ($tables as $table) {
             $tableName = Prefix::remove($table->getName());
             if (in_array($tableName, $skipTables)) {
@@ -36,7 +36,7 @@ class GenerateModelsCommand extends Command
             }
 
             $config->setClassName(EmgHelper::getClassNameByTableName($tableName));
-            $model = $this->generator->generateModel($config);
+            $model = $generator->generateModel($config);
             $this->saveModel($model);
 
             $this->output->writeln(sprintf('Model %s generated', $model->getName()->getName()));
